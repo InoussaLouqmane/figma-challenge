@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,12 +14,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create(User::TABLENAME, function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string(User::COL_NAME);
+            $table->string(User::COL_EMAIL)->unique();
+            $table->string(User::COL_PASSWORD);
+            $table->enum(User::COL_ROLE, array_column(UserRole::cases(), 'value'));
+            $table->string(User::COL_COUNTRY);
+            $table->string(User::COL_PHONE)->nullable();
+            $table->text(User::COL_BIO)->nullable();
+            $table->string(User::COL_PHOTO)->nullable();
+            $table->enum(User::COL_STATUS, array_column(UserStatus::cases(), 'value'))->default(UserStatus::Active->value);
+            $table->timestamp(User::COL_EMAIL_VERIFIED_AT)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

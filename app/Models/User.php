@@ -1,48 +1,76 @@
 <?php
 
+
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    // Table
+    public const TABLENAME = 'users';
+
+    // Colonnes
+    public const COL_ID                = 'id';
+    public const COL_NAME              = 'name';
+    public const COL_EMAIL             = 'email';
+    public const COL_PASSWORD          = 'password';
+    public const COL_ROLE              = 'role';
+    public const COL_COUNTRY           = 'country';
+    public const COL_PHONE             = 'phone';
+    public const COL_BIO               = 'bio';
+    public const COL_PHOTO             = 'photo';
+    public const COL_STATUS            = 'status';
+    public const COL_EMAIL_VERIFIED_AT= 'email_verified_at';
+    public const COL_REMEMBER_TOKEN    = 'remember_token';
+    public const COL_CREATED_AT        = 'created_at';
+    public const COL_UPDATED_AT        = 'updated_at';
+
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        self::COL_NAME,
+        self::COL_EMAIL,
+        self::COL_PASSWORD,
+        self::COL_ROLE,
+        self::COL_COUNTRY,
+        self::COL_PHONE,
+        self::COL_BIO,
+        self::COL_PHOTO,
+        self::COL_STATUS,
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
+    protected $casts = [
+        self::COL_ROLE => UserRole::class,
+        self::COL_STATUS => UserStatus::class,
+        self::COL_EMAIL_VERIFIED_AT => 'datetime',
+    ];
+
     protected $hidden = [
-        'password',
-        'remember_token',
+        self::COL_PASSWORD,
+        self::COL_REMEMBER_TOKEN,
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    // Relations
+
+    public function soumissions(): HasMany
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Soumission::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(NoteJury::class);
+    }
+
+    public function resources(): HasMany
+    {
+        return $this->hasMany(Resource::class, 'uploaded_by');
     }
 }
