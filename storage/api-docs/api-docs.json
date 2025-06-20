@@ -1,0 +1,1758 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Figma Challenge",
+        "description": "Documentation des schémas des requêtes",
+        "contact": {
+            "name": "Louqmane Inoussa"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Inscription d'un challenger",
+                "operationId": "d764dd091cc4494ae0baf360b03319f3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation",
+                                    "country"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Benin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Utilisateur inscrit avec succès"
+                    },
+                    "422": {
+                        "description": "Validation échouée"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Connexion d'un utilisateur",
+                "operationId": "8dcb70df1020986038d098cc08d05dae",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Connexion réussie"
+                    },
+                    "422": {
+                        "description": "Identifiants invalides"
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Déconnexion de l'utilisateur",
+                "operationId": "69281b12abb272c76871f19cb17ca563",
+                "responses": {
+                    "200": {
+                        "description": "Déconnecté avec succès"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Obtenir les informations de l'utilisateur connecté",
+                "operationId": "b9abb1a7a74670a19c215c2c133f14d8",
+                "responses": {
+                    "200": {
+                        "description": "Données utilisateur renvoyées"
+                    }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
+                }
+            }
+        },
+        "/api/challenges": {
+            "get": {
+                "tags": [
+                    "Challenges"
+                ],
+                "summary": "Lister toutes les éditions",
+                "operationId": "df61bd7503e62a2251f358931e0f3a5f",
+                "responses": {
+                    "200": {
+                        "description": "Liste des éditions retournée avec succès"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Challenges"
+                ],
+                "summary": "Créer une nouvelle édition",
+                "operationId": "63ffd18fb5f5371ec322250145cbb046",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "edition",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Figma Challenge 2025"
+                                    },
+                                    "edition": {
+                                        "type": "string",
+                                        "example": "2025"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Une édition spéciale..."
+                                    },
+                                    "cover": {
+                                        "type": "string",
+                                        "example": "cover.jpg"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "draft",
+                                            "open",
+                                            "closed"
+                                        ],
+                                        "example": "open"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-08-31"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Challenge créé avec succès"
+                    },
+                    "422": {
+                        "description": "Données invalides"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/challenges/{id}": {
+            "get": {
+                "tags": [
+                    "Challenges"
+                ],
+                "summary": "Voir une édition précise",
+                "operationId": "ed8928d8cd2720e0dcce6cd0e29767f1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'édition",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Challenge trouvé"
+                    },
+                    "404": {
+                        "description": "Challenge introuvable"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Challenges"
+                ],
+                "summary": "Modifier une édition",
+                "operationId": "8f55380ce146081226d3559b05c43570",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du challenge à modifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Nouvel intitulé"
+                                    },
+                                    "edition": {
+                                        "type": "string",
+                                        "example": "2025"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Description mise à jour"
+                                    },
+                                    "cover": {
+                                        "type": "string",
+                                        "example": "new-cover.jpg"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "draft",
+                                            "open",
+                                            "closed"
+                                        ],
+                                        "example": "closed"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-09-30"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Challenge mis à jour"
+                    },
+                    "404": {
+                        "description": "Introuvable"
+                    },
+                    "422": {
+                        "description": "Validation échouée"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Challenges"
+                ],
+                "summary": "Supprimer une édition",
+                "operationId": "8621e1614a29d01b58dd2c4384d0afba",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'édition à supprimer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Challenge supprimé"
+                    },
+                    "404": {
+                        "description": "Introuvable"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/contact-messages": {
+            "get": {
+                "tags": [
+                    "Contact Messages"
+                ],
+                "summary": "Lister tous les messages de contact",
+                "operationId": "0be20a7e3c5a4c1eaa68c758a3e7eb1c",
+                "responses": {
+                    "200": {
+                        "description": "Liste des messages"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Contact Messages"
+                ],
+                "summary": "Soumettre un message de contact",
+                "operationId": "5e271348f1c0fa1a6a13264a1d2a8c9e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Jane Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "jane@example.com"
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Bonjour, j'ai une question concernant..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Message enregistré"
+                    }
+                }
+            }
+        },
+        "/api/contact-messages/{id}": {
+            "get": {
+                "tags": [
+                    "Contact Messages"
+                ],
+                "summary": "Afficher un message de contact",
+                "operationId": "d04356f09b379f43b7ba80c2858cf35f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message trouvé"
+                    },
+                    "404": {
+                        "description": "Message non trouvé"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Contact Messages"
+                ],
+                "summary": "Supprimer un message de contact",
+                "operationId": "376bba76f4c0bc69f74b952c1cd9c449",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message supprimé"
+                    }
+                }
+            }
+        },
+        "/api/notes": {
+            "get": {
+                "tags": [
+                    "Notes Jury"
+                ],
+                "summary": "Lister toutes les notes de jury",
+                "operationId": "625a58996d697c0651d8aa409724c1aa",
+                "responses": {
+                    "200": {
+                        "description": "Liste des notes"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Notes Jury"
+                ],
+                "summary": "Attribuer une note",
+                "operationId": "cc6aca6ed6e3079e4618e5d513d9d1a5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "soumission_id",
+                                    "graphisme",
+                                    "animation",
+                                    "navigation"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "soumission_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "graphisme": {
+                                        "type": "integer",
+                                        "example": 9
+                                    },
+                                    "animation": {
+                                        "type": "integer",
+                                        "example": 8
+                                    },
+                                    "navigation": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "commentaire": {
+                                        "type": "string",
+                                        "example": "Très bon travail globalement"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Note enregistrée"
+                    }
+                }
+            }
+        },
+        "/api/notes/{id}": {
+            "get": {
+                "tags": [
+                    "Notes Jury"
+                ],
+                "summary": "Afficher une note",
+                "operationId": "a543dbddf0b155f408e1f047ff5b8592",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détail de la note"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Notes Jury"
+                ],
+                "summary": "Supprimer une note",
+                "operationId": "4e837ec1c5e2ed6f00134ea84f83d89c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Note supprimée"
+                    }
+                }
+            }
+        },
+        "/api/notifications": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Lister toutes les notifications",
+                "operationId": "911565ad9aff9ba7eded3f189509e578",
+                "responses": {
+                    "200": {
+                        "description": "Liste des notifications"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Créer une notification",
+                "operationId": "91f8e779a9e46cb5cdda969e5a928a94",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "audience"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Deadline demain !"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "N'oubliez pas de soumettre votre projet avant minuit."
+                                    },
+                                    "audience": {
+                                        "type": "string",
+                                        "example": "challengers"
+                                    },
+                                    "scheduled_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-06-24T12:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Notification créée"
+                    }
+                }
+            }
+        },
+        "/api/notifications/{id}": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Afficher une notification",
+                "operationId": "f2edf725f41dd6c9a9338a6a7b39d779",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détail de la notification"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Supprimer une notification",
+                "operationId": "54c4eb5ec5dc0d1e2916cec2fced1056",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notification supprimée"
+                    }
+                }
+            }
+        },
+        "/api/projects": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Lister tous les projets",
+                "operationId": "8d4a13ef3fc773ff4031e515460919ea",
+                "responses": {
+                    "200": {
+                        "description": "Liste des projets"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Créer un nouveau projet",
+                "operationId": "a4dd4c17bf5fc24c224357f03dcc848a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "category",
+                                    "challenge_id",
+                                    "deadline"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Repenser une plateforme de transport"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Créer une expérience fluide pour les utilisateurs"
+                                    },
+                                    "cover": {
+                                        "type": "string",
+                                        "example": "project.png"
+                                    },
+                                    "challenge_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "transport"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-10"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-20"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Projet créé"
+                    }
+                }
+            }
+        },
+        "/api/projects/{id}": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Afficher un projet",
+                "operationId": "af32aed47c19d517816e0b970d60cd5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Projet détaillé"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Mettre à jour un projet",
+                "operationId": "491d11cc6efd20335421a859159e2487",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreProjectRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Projet mis à jour"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Supprimer un projet",
+                "operationId": "187865e30ff6b72f1cea3037d9dd84fa",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Projet supprimé"
+                    }
+                }
+            }
+        },
+        "/api/resources": {
+            "get": {
+                "tags": [
+                    "Resources"
+                ],
+                "summary": "Lister toutes les ressources",
+                "operationId": "ee96de2f37d473ea4740b7700ddd1daf",
+                "responses": {
+                    "200": {
+                        "description": "Liste des ressources"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Resources"
+                ],
+                "summary": "Ajouter une ressource",
+                "operationId": "0da436b1bb56ca9fcbc4523e6be6b1cc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "link",
+                                    "type",
+                                    "category"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Guide d'accessibilité"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Ce guide explique les bonnes pratiques."
+                                    },
+                                    "link": {
+                                        "type": "string",
+                                        "example": "https://example.com/resource.pdf"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "pdf"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "externe"
+                                    },
+                                    "visible_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-06-24T00:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ressource ajoutée"
+                    }
+                }
+            }
+        },
+        "/api/resources/{id}": {
+            "get": {
+                "tags": [
+                    "Resources"
+                ],
+                "summary": "Afficher une ressource",
+                "operationId": "0a50757b93fffe7af4ed5452f2af50b7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détail de la ressource"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Resources"
+                ],
+                "summary": "Mettre à jour une ressource",
+                "operationId": "e2691f77734474fa0b5f3bff96dbb556",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreResourceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ressource mise à jour"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Resources"
+                ],
+                "summary": "Supprimer une ressource",
+                "operationId": "19d9ee1b48d33cb8863f0554d74b4222",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ressource supprimée"
+                    }
+                }
+            }
+        },
+        "/api/settings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Afficher les informations générales du site",
+                "operationId": "a689529a353f6eda06b5555d05795c50",
+                "responses": {
+                    "200": {
+                        "description": "Informations récupérées"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Mettre à jour les informations du site",
+                "operationId": "bc887b395fba31757442775e8561b1b3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "site_name": {
+                                        "type": "string",
+                                        "example": "Figma Challenge"
+                                    },
+                                    "about": {
+                                        "type": "string",
+                                        "example": "Une initiative pour promouvoir le bon design"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "contact@figma-challenge.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+22900000000"
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "example": "logo.png"
+                                    },
+                                    "facebook": {
+                                        "type": "string",
+                                        "example": "https://facebook.com/figmachallenge"
+                                    },
+                                    "linkedin": {
+                                        "type": "string",
+                                        "example": "https://linkedin.com/company/figmachallenge"
+                                    },
+                                    "github": {
+                                        "type": "string",
+                                        "example": "https://github.com/figma-challenge"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Informations mises à jour"
+                    }
+                }
+            }
+        },
+        "/api/soumissions": {
+            "get": {
+                "tags": [
+                    "Soumissions"
+                ],
+                "summary": "Lister toutes les soumissions",
+                "operationId": "6b1262672e03e053593f03a69d83d753",
+                "responses": {
+                    "200": {
+                        "description": "Liste des soumissions"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Soumissions"
+                ],
+                "summary": "Soumettre un projet",
+                "operationId": "87d20d4bf70e96a918679aa42db0ca0a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "project_id",
+                                    "challenge_id",
+                                    "inscription_date"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "project_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "challenge_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "inscription_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-06-15T18:00:00"
+                                    },
+                                    "figma_link": {
+                                        "type": "string",
+                                        "example": "https://figma.com/file/xyz"
+                                    },
+                                    "soumission_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "commentaire": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "soumis"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Soumission enregistrée"
+                    }
+                }
+            }
+        },
+        "/api/soumissions/{id}": {
+            "get": {
+                "tags": [
+                    "Soumissions"
+                ],
+                "summary": "Afficher une soumission",
+                "operationId": "d65405d20e7cc8d77bb6be32729ba964",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Soumission détaillée"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Soumissions"
+                ],
+                "summary": "Mettre à jour une soumission",
+                "operationId": "f1559f8bd2b5d931f806e581ff7990d6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreSoumissionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Soumission mise à jour"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Soumissions"
+                ],
+                "summary": "Supprimer une soumission",
+                "operationId": "dee25ebc18fdc8f7767884cb3260716b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Soumission supprimée"
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Lister tous les utilisateurs",
+                "operationId": "c457726701591d1183b53aa71fc13441",
+                "responses": {
+                    "200": {
+                        "description": "Liste des utilisateurs"
+                    }
+                }
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Afficher un utilisateur",
+                "operationId": "36a33ff774d5cba33c039dec2c3e0287",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de l'utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Mettre à jour un utilisateur",
+                "operationId": "b9091397c8b25f12c6adb74be6ce3a5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "role",
+                                    "country"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "admin",
+                                            "jury",
+                                            "challenger"
+                                        ],
+                                        "example": "challenger"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Benin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur mis à jour"
+                    },
+                    "422": {
+                        "description": "Validation échouée"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Supprimer un utilisateur",
+                "operationId": "fa56cffde745d3f152f95cbacd936c0b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur supprimé"
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé"
+                    }
+                }
+            }
+        },
+        "/api/users/create": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "ajouter un utilisateur",
+                "operationId": "d37ea9642c2cfbe867361ca7da44eec7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur supprimé"
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "StoreProjectRequest": {
+                "required": [
+                    "title",
+                    "category",
+                    "challenge_id",
+                    "deadline"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Projet Mobilité"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Une plateforme pour organiser le transport urbain"
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "transport"
+                    },
+                    "cover": {
+                        "type": "string",
+                        "example": "project-cover.png"
+                    },
+                    "challenge_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-07-01"
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-07-31"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreResourceRequest": {
+                "required": [
+                    "title",
+                    "link",
+                    "type",
+                    "category"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Guide de participation"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Document PDF expliquant les règles"
+                    },
+                    "link": {
+                        "type": "string",
+                        "format": "url",
+                        "example": "https://figma-challenge.bj/ressources/guide.pdf"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "pdf",
+                            "lien",
+                            "autre"
+                        ],
+                        "example": "pdf"
+                    },
+                    "category": {
+                        "type": "string",
+                        "enum": [
+                            "externe",
+                            "video",
+                            "autre"
+                        ],
+                        "example": "externe"
+                    },
+                    "visible_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2025-07-01T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreChallengeRequest": {
+                "required": [
+                    "title",
+                    "edition",
+                    "status"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Figma Challenge 2025"
+                    },
+                    "edition": {
+                        "type": "string",
+                        "example": "2025"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Une édition axée sur l'expérience utilisateur"
+                    },
+                    "cover": {
+                        "type": "string",
+                        "example": "challenge-cover.jpg"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "draft",
+                            "open",
+                            "closed"
+                        ],
+                        "example": "open"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-08-31"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreSoumissionRequest": {
+                "required": [
+                    "user_id",
+                    "project_id",
+                    "challenge_id",
+                    "inscription_date"
+                ],
+                "properties": {
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "project_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "challenge_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "inscription_date": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2025-07-01T10:00:00Z"
+                    },
+                    "figma_link": {
+                        "type": "string",
+                        "example": "https://figma.com/file/abc123"
+                    },
+                    "soumission_date": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2025-07-10T22:00:00Z"
+                    },
+                    "commentaire": {
+                        "type": "string",
+                        "example": "Soumission initiale"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreNoteJuryRequest": {
+                "required": [
+                    "user_id",
+                    "soumission_id",
+                    "graphisme",
+                    "animation",
+                    "navigation"
+                ],
+                "properties": {
+                    "user_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "soumission_id": {
+                        "type": "integer",
+                        "example": 12
+                    },
+                    "graphisme": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "animation": {
+                        "type": "integer",
+                        "example": 7
+                    },
+                    "navigation": {
+                        "type": "integer",
+                        "example": 9
+                    },
+                    "commentaire": {
+                        "type": "string",
+                        "example": "Bon travail, mais améliorable sur l’accessibilité"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreNotificationRequest": {
+                "required": [
+                    "title",
+                    "content",
+                    "audience"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Fin des soumissions"
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "Vous avez jusqu'à ce soir minuit pour soumettre"
+                    },
+                    "audience": {
+                        "type": "string",
+                        "enum": [
+                            "all",
+                            "challenger",
+                            "jury"
+                        ],
+                        "example": "challenger"
+                    },
+                    "scheduled_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2025-07-30T18:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreUserRequest": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "country"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Louqmane Inoussa"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "louqmane@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "strongPass123"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Bénin"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+229 97 00 00 00"
+                    },
+                    "bio": {
+                        "type": "string",
+                        "example": "Designer passionné par l’UX"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "admin",
+                            "jury",
+                            "challenger"
+                        ],
+                        "example": "challenger"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "banned"
+                        ],
+                        "example": "active"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "12"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentification",
+            "description": "Authentification"
+        },
+        {
+            "name": "Challenges",
+            "description": "Challenges"
+        },
+        {
+            "name": "Contact Messages",
+            "description": "Contact Messages"
+        },
+        {
+            "name": "Notes Jury",
+            "description": "Notes Jury"
+        },
+        {
+            "name": "Notifications",
+            "description": "Notifications"
+        },
+        {
+            "name": "Projects",
+            "description": "Projects"
+        },
+        {
+            "name": "Resources",
+            "description": "Resources"
+        },
+        {
+            "name": "Settings",
+            "description": "Settings"
+        },
+        {
+            "name": "Soumissions",
+            "description": "Soumissions"
+        },
+        {
+            "name": "Users",
+            "description": "Users"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ]
+}

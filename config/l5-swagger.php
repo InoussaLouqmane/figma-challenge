@@ -169,6 +169,12 @@ return [
          * API security definitions. Will be generated into documentation file.
         */
         'securityDefinitions' => [
+            'bearerAuth' => [
+                'type' => 'apiKey',
+                'in' => 'header',
+                'name' => 'Authorization',
+                'description' => 'Bearer Token'
+            ],
             'securitySchemes' => [
                 /*
                  * Examples of Security schemes
@@ -217,6 +223,9 @@ return [
                 */
             ],
             'security' => [
+                [
+                    'bearerAuth' => []
+                ],
                 /*
                  * Examples of Securities
                  */
