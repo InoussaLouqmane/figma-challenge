@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreResourceRequest extends FormRequest
 {
@@ -25,9 +27,18 @@ class StoreResourceRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'link' => 'required|url',
-            'category' => 'required|in:externe,vidéo,autre',
+            'description' => 'sometimes|string',
+            'category' => 'required|in:externe,video,autre',
             'type' => 'required|in:pdf,lien,autre',
             'visible_at' => 'nullable|date', // Date optionnelle
         ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

@@ -18,9 +18,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId(NoteJury::COL_USER_ID)->constrained(User::TABLENAME)->onDelete('cascade'); // jury
             $table->foreignId(NoteJury::COL_SOUMISSION_ID)->constrained(Soumission::TABLENAME)->onDelete('cascade');
-            $table->unsignedTinyInteger(NoteJury::COL_GRAPHISME);
-            $table->unsignedTinyInteger(NoteJury::COL_ANIMATION);
-            $table->unsignedTinyInteger(NoteJury::COL_NAVIGATION);
+            $table->unsignedTinyInteger(NoteJury::COL_GRAPHISME)->default(0);
+            $table->unsignedTinyInteger(NoteJury::COL_ANIMATION)->default(0);
+            $table->unsignedTinyInteger(NoteJury::COL_NAVIGATION)->default(0);
             $table->text(NoteJury::COL_COMMENTAIRE)->nullable();
             $table->timestamps();
             $table->unique([NoteJury::COL_USER_ID, NoteJury::COL_SOUMISSION_ID]);

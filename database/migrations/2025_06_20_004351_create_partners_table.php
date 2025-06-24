@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create(Partner::TABLENAME, function (Blueprint $table) {
             $table->id();
+            $table->foreignId(Partner::COL_CHALLENGE_ID)->constrained()->onDelete('cascade');
             $table->string(Partner::COL_NAME);
             $table->string(Partner::COL_LOGO);
             $table->text(Partner::COL_DESCRIPTION)->nullable();

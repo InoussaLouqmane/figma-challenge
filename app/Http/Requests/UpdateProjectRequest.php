@@ -4,7 +4,9 @@ namespace App\Http\Requests;
 
 use App\Enums\UserRole;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateProjectRequest extends FormRequest
@@ -31,7 +33,22 @@ class UpdateProjectRequest extends FormRequest
             'category' => 'sometimes|string|max:120',
             'start_date' => 'nullable|date',
             'deadline' => 'nullable|date|after:today', // Si présent, la date doit être dans le futur
-            'status' => 'required|in:active,closed',
+            'status' => 'sometimes|in:active,closed',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'status' => $this->input('status', 'active'),
+        ]);
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

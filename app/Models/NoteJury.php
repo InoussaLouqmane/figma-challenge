@@ -10,10 +10,11 @@ class NoteJury extends Model
 
     use HasFactory;
 
+    protected $table = NoteJury::TABLENAME;
     public const TABLENAME = 'note_juries';
 
     public const COL_ID = 'id';
-    public const COL_USER_ID = 'user_id';
+    public const COL_USER_ID = 'jury_id';
     public const COL_SOUMISSION_ID = 'soumission_id';
     public const COL_GRAPHISME = 'graphisme';
     public const COL_ANIMATION = 'animation';
@@ -33,7 +34,7 @@ class NoteJury extends Model
 
     public function jury(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, self::COL_USER_ID);
     }
 
     public function soumission(): \Illuminate\Database\Eloquent\Relations\BelongsTo

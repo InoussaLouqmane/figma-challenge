@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateChallengeRequest extends FormRequest
 {
@@ -24,11 +26,19 @@ class UpdateChallengeRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|string|max:255',  // Titre obligatoire
-            'edition' => 'sometimes|string|max:100',  // Edition obligatoire
             'description' => 'nullable|string',  // Description facultative
             'cover' => 'nullable|string',  // Cover facultatif, URL ou chemin
             'status' => 'required|in:draft,open,closed',  // Status obligatoire
             'end_date' => 'nullable|date|after_or_equal:today',
         ];
     }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
+    }
 }
+

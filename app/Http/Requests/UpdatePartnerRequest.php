@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdatePartnerRequest extends FormRequest
 {
@@ -29,5 +31,13 @@ class UpdatePartnerRequest extends FormRequest
             'website' => 'nullable|url',  // Site web optionnel, mais si présent, doit être une URL valide
             'visible' => 'nullable|boolean',
         ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

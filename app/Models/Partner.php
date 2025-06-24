@@ -15,6 +15,7 @@ class Partner extends Model
     public const COL_ID = 'id';
     public const COL_NAME = 'name';
     public const COL_LOGO = 'logo';
+    public const COL_CHALLENGE_ID='challenge_id';
     public const COL_DESCRIPTION = 'description';
     public const COL_TYPE = 'type';
     public const COL_WEBSITE = 'website';
@@ -24,6 +25,7 @@ class Partner extends Model
     public const COL_UPDATED_AT = 'updated_at';
 
     protected $fillable = [
+        self::COL_CHALLENGE_ID,
         self::COL_NAME,
         self::COL_LOGO,
         self::COL_DESCRIPTION,
@@ -37,4 +39,8 @@ class Partner extends Model
         self::COL_VISIBLE => 'boolean',
         self::COL_TYPE => PartnerType::class,
     ];
+
+    public function edition(){
+        $this->belongsTo(Challenge::class);
+    }
 }

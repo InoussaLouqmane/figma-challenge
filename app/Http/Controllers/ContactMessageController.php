@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactMessage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreContactMessageRequest;
 
@@ -13,18 +14,34 @@ class ContactMessageController extends Controller
      *     path="/api/contact-messages",
      *     summary="Lister tous les messages de contact",
      *     tags={"Contact Messages"},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Response(response=200, description="Liste des messages")
      * )
      */
     public function index()
     {
-        return ContactMessage::latest()->get();
+        try {
+            $contactMessages = ContactMessage::all();
+            if($contactMessages->isEmpty()){
+                return response()->json([
+                    'message' => 'Aucun message trouve'
+                ], 404);
+            }
+            return ContactMessage::latest()->get();
+
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+
     }
 
     /**
      * @OA\Post(
      *     path="/api/contact-messages",
      *     summary="Soumettre un message de contact",
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     tags={"Contact Messages"},
      *     @OA\RequestBody(
      *         required=true,
@@ -49,6 +66,7 @@ class ContactMessageController extends Controller
      *     path="/api/contact-messages/{id}",
      *     summary="Afficher un message de contact",
      *     tags={"Contact Messages"},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(response=200, description="Message trouvé"),
      *     @OA\Response(response=404, description="Message non trouvé")
@@ -56,13 +74,22 @@ class ContactMessageController extends Controller
      */
     public function show($id)
     {
-        return ContactMessage::findOrFail($id);
+        try {
+            return ContactMessage::findOrFail($id);
+        }catch(ModelNotFoundException $exception){
+            return response()->json([
+                'message' => 'Le message n\'existe pas',
+                'erreur' => $exception->getMessage()
+            ], 404);
+        }
+
     }
 
     /**
      * @OA\Delete(
      *     path="/api/contact-messages/{id}",
      *     summary="Supprimer un message de contact",
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     tags={"Contact Messages"},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(response=200, description="Message supprimé")
@@ -70,7 +97,20 @@ class ContactMessageController extends Controller
      */
     public function destroy($id)
     {
-        ContactMessage::destroy($id);
-        return response()->json(['message' => 'Message supprimé']);
+        try {
+            $contactMessage = ContactMessage::findOrFail($id);
+            $contactMessage->delete();
+
+            return response()->json([
+                'message' => 'Message supprimé'
+            ], 200);
+
+        }catch(ModelNotFoundException $exception){
+            return response()->json([
+                'message' => 'Le message n\'existe pas',
+            ], 404);
+        }
+
+
     }
 }

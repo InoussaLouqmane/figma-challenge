@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Enums\ProjectStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Sanctum\HasApiTokens;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory;
 
     public const TABLENAME = 'projects';
 
@@ -43,11 +46,25 @@ class Project extends Model
 
     public function challenge(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Challenge::class);
+        return $this->belongsTo(Challenge::class, self::COL_CHALLENGE_ID, self::COL_ID);
     }
 
-    public function soumissions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function soumissions(): HasMany
     {
         return $this->hasMany(Soumission::class);
+    }
+
+    public function subscribers(): belongsToMany{
+        return  $this->belongsToMany(
+            User::class,
+            Soumission::TABLENAME,
+            Soumission::COL_PROJECT_ID,
+            Soumission::COL_USER_ID
+        )->withPivot([
+            Soumission::COL_CHALLENGE_ID,
+            Soumission::COL_STATUS,
+            Soumission::COL_SOUMISSION_DATE,
+            Soumission::COL_FIGMA_LINK,
+        ])->withTimestamps();
     }
 }

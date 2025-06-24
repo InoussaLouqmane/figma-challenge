@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateSiteSettingRequest;
 
@@ -10,21 +11,35 @@ class SiteSettingController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/settings",
+     *     path="/api/site-settings",
      *     summary="Afficher les informations générales du site",
      *     tags={"Settings"},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Response(response=200, description="Informations récupérées")
      * )
      */
     public function index()
     {
-        return SiteSetting::first();
+        try {
+            $settings = SiteSetting::all()->first();
+            if(!$settings)
+                return response()->json([
+                    'message' => 'Site Setting not found'
+                ], 404);
+            return $settings;
+        }catch (\Exception $exception){
+            return response()->json([
+                'message' => 'Une erreur a ete detectee',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * @OA\Put(
-     *     path="/api/settings",
+     *     path="/api/site-settings",
      *     summary="Mettre à jour les informations du site",
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     tags={"Settings"},
      *     @OA\RequestBody(
      *         required=true,
@@ -54,4 +69,6 @@ class SiteSettingController extends Controller
 
         return response()->json(['message' => 'Paramètres mis à jour', 'data' => $settings]);
     }
+
+
 }

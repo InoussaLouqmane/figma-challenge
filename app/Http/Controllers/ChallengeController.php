@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreChallengeRequest;
 use App\Http\Requests\UpdateChallengeRequest;
 use App\Models\Challenge;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 
 class ChallengeController extends Controller
@@ -15,17 +18,33 @@ class ChallengeController extends Controller
      *     path="/api/challenges",
      *     summary="Lister toutes les éditions",
      *     tags={"Challenges"},
-     *     security={{"sanctum": {}}},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Response(
      *         response=200,
      *         description="Liste des éditions retournée avec succès"
-     *     )
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Une erreur est survenue lors de la récupération de la liste"
+     *      ),
+     *     @OA\Response(
+     *          response=403,
+     *          description="Vous n'êtes pas authentifié (token invalide)"
+     *      )
+     *
      * )
      */
     public function index()
     {
-        $challenges = Challenge::latest()->get();
-        return response()->json($challenges);
+        try {
+            $challenges = Challenge::latest()->get();
+            return response()->json($challenges);
+        }catch (Exception $exception){
+            return response()->json([
+                'message' =>  $exception->getMessage(),
+            ], 400);
+        }
+
     }
 
     /**
@@ -33,13 +52,12 @@ class ChallengeController extends Controller
      *     path="/api/challenges",
      *     summary="Créer une nouvelle édition",
      *     tags={"Challenges"},
-     *     security={{"sanctum": {}}},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"title", "edition", "status"},
+     *             required={"title", "status"},
      *             @OA\Property(property="title", type="string", example="Figma Challenge 2025"),
-     *             @OA\Property(property="edition", type="string", example="2025"),
      *             @OA\Property(property="description", type="string", example="Une édition spéciale..."),
      *             @OA\Property(property="cover", type="string", example="cover.jpg"),
      *             @OA\Property(property="status", type="string", enum={"draft", "open", "closed"}, example="open"),
@@ -52,12 +70,21 @@ class ChallengeController extends Controller
      */
     public function store(StoreChallengeRequest $request): \Illuminate\Http\JsonResponse
     {
-        $challenge = Challenge::create($request->validated());
+        try {
 
-        return response()->json([
-            'message' => 'Challenge créé avec succès',
-            'challenge' => $challenge
-        ], 201);
+            $challenge = Challenge::create($request->validated());
+
+            return response()->json([
+                'message' => 'Challenge créé avec succès',
+                'challenge' => $challenge
+            ], 201);
+
+        }catch (Exception $exception){
+            return response()->json([
+                'message' =>  $exception->getMessage(),
+            ], 400);
+        }
+
     }
 
     /**
@@ -65,7 +92,7 @@ class ChallengeController extends Controller
      *     path="/api/challenges/{id}",
      *     summary="Voir une édition précise",
      *     tags={"Challenges"},
-     *     security={{"sanctum": {}}},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -79,8 +106,20 @@ class ChallengeController extends Controller
      */
     public function show($id)
     {
-        $challenge = Challenge::findOrFail($id);
-        return response()->json($challenge);
+        try {
+            $challenge = Challenge::findOrFail($id);
+            return response()->json($challenge);
+        } catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'error' => 'Challenge non trouvé',
+                'message' => $exception->getMessage(),
+            ], 404);
+        } catch (Exception $exception) {
+            return response()->json([
+                'error' => 'An error occurred',
+                'message' => $exception->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -88,7 +127,7 @@ class ChallengeController extends Controller
      *     path="/api/challenges/{id}",
      *     summary="Modifier une édition",
      *     tags={"Challenges"},
-     *     security={{"sanctum": {}}},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -100,7 +139,6 @@ class ChallengeController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             @OA\Property(property="title", type="string", example="Nouvel intitulé"),
-     *             @OA\Property(property="edition", type="string", example="2025"),
      *             @OA\Property(property="description", type="string", example="Description mise à jour"),
      *             @OA\Property(property="cover", type="string", example="new-cover.jpg"),
      *             @OA\Property(property="status", type="string", enum={"draft", "open", "closed"}, example="closed"),
@@ -114,13 +152,35 @@ class ChallengeController extends Controller
      */
     public function update(UpdateChallengeRequest $request, $id)
     {
-        $challenge = Challenge::findOrFail($id);
-        $challenge->update($request->validated());
+        try {
 
-        return response()->json([
-            'message' => 'Challenge mis à jour',
-            'challenge' => $challenge
-        ]);
+            $challenge = Challenge::findOrFail($id);
+            $challenge->update($request->validated());
+            return response()->json([
+                'message' => 'Challenge mis à jour',
+                'challenge' => $challenge
+            ]);
+
+        } catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'error' => 'Challenge not found',
+                'message' => $exception->getMessage(),
+            ], 404);
+
+        } catch (ValidationException $exception) {
+
+            return response()->json([
+                'error' => 'La validation des donnees a echoue',
+                'message' => $exception->getMessage(),
+                'errors' => $exception->errors(),
+            ], 422);
+        } catch (\Exception $exception) {
+
+            return response()->json([
+                'error' => 'Une erreur est survenue',
+                'message' => $exception->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -128,7 +188,7 @@ class ChallengeController extends Controller
      *     path="/api/challenges/{id}",
      *     summary="Supprimer une édition",
      *     tags={"Challenges"},
-     *     security={{"sanctum": {}}},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -142,10 +202,22 @@ class ChallengeController extends Controller
      */
     public function destroy($id)
     {
-        $challenge = Challenge::findOrFail($id);
-        $challenge->delete();
+        try {
+            $challenge = Challenge::findOrFail($id);
+            $challenge->delete();
+            return response()->json(['message' => 'Challenge supprimé']);
+        }catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'error' => 'Challenge non trouve',
+                'message' => $exception->getMessage(),
+            ], 404);
+        }catch (Exception $exception) {
+            return response()->json([
+                'error' => 'Une erreur est survenue',
+                'message' => $exception->getMessage(),
+            ],500);
+        }
 
-        return response()->json(['message' => 'Challenge supprimé']);
     }
 }
 

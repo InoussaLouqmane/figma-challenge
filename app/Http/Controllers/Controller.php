@@ -3,21 +3,15 @@
 namespace App\Http\Controllers;
 
 /**
- * @OA\SecurityScheme(
- *     securityScheme="bearerAuth",
- *     type="http",
- *     scheme="bearer"
- * )
- */
-
-namespace App\Http\Controllers;
-
-/**
  * @OA\Info(
- *     version="1.0",
- *     title="Figma Challenge",
- *     description="Documentation des schémas des requêtes",
- *     @OA\Contact(name="Louqmane Inoussa")
+ *    title="Figma Challenge apis",
+ *    version="1.0.0",
+ * )
+ * @OA\SecurityScheme(
+ *     type="http",
+ *     securityScheme="bearerAuth",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
  * )
  *
  * @OA\Schema(
@@ -56,15 +50,18 @@ namespace App\Http\Controllers;
  *
  * @OA\Schema(
  *     schema="StoreSoumissionRequest",
- *     required={"user_id", "project_id", "challenge_id", "inscription_date"},
+ *     required={"user_id", "project_id"},
  *     @OA\Property(property="user_id", type="integer", example=1),
  *     @OA\Property(property="project_id", type="integer", example=3),
- *     @OA\Property(property="challenge_id", type="integer", example=2),
- *     @OA\Property(property="inscription_date", type="string", format="datetime", example="2025-07-01T10:00:00Z"),
- *     @OA\Property(property="figma_link", type="string", example="https://figma.com/file/abc123"),
- *     @OA\Property(property="soumission_date", type="string", format="datetime", example="2025-07-10T22:00:00Z"),
- *     @OA\Property(property="commentaire", type="string", example="Soumission initiale")
  * )
+ *
+ *  @OA\Schema(
+ *      schema="UpdateSoumissionRequest",
+ *      required={"user_id", "figma_link"},
+ *      @OA\Property(property="user_id", type="integer", example=1),
+ *      @OA\Property(property="figma_link", type="string", example="https://figma.com/file/abc123"),
+ *      @OA\Property(property="commentaire", type="string", example="Soumission initiale")
+ *  )
  *
  * @OA\Schema(
  *     schema="StoreNoteJuryRequest",

@@ -1,12 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Figma Challenge",
-        "description": "Documentation des schémas des requêtes",
-        "contact": {
-            "name": "Louqmane Inoussa"
-        },
-        "version": "1.0"
+        "title": "Figma Challenge apis",
+        "version": "1.0.0"
     },
     "paths": {
         "/api/auth/register": {
@@ -14,7 +10,7 @@
                 "tags": [
                     "Authentification"
                 ],
-                "summary": "Inscription d'un challenger",
+                "summary": "Inscription d'un utilisateur",
                 "operationId": "d764dd091cc4494ae0baf360b03319f3",
                 "requestBody": {
                     "required": true,
@@ -51,6 +47,16 @@
                                     "country": {
                                         "type": "string",
                                         "example": "Benin"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "challenger",
+                                        "nullable": true
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+229 0166662946",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -63,7 +69,10 @@
                         "description": "Utilisateur inscrit avec succès"
                     },
                     "422": {
-                        "description": "Validation échouée"
+                        "description": "La validation des données a échoué"
+                    },
+                    "500": {
+                        "description": "Erreur du côté serveur"
                     }
                 }
             }
@@ -105,8 +114,11 @@
                     "200": {
                         "description": "Connexion réussie"
                     },
-                    "422": {
+                    "403": {
                         "description": "Identifiants invalides"
+                    },
+                    "422": {
+                        "description": "La validation des données a échoué"
                     }
                 }
             }
@@ -116,18 +128,19 @@
                 "tags": [
                     "Authentification"
                 ],
-                "summary": "Déconnexion de l'utilisateur",
+                "summary": "Déconnexion de l'utilisateur (nécessite le token Bearer)",
                 "operationId": "69281b12abb272c76871f19cb17ca563",
                 "responses": {
                     "200": {
                         "description": "Déconnecté avec succès"
                     }
                 },
-                "security": [
-                    {
+                "security": {
+                    "0": {
                         "sanctum": []
-                    }
-                ]
+                    },
+                    "bearerAuth": {}
+                }
             }
         },
         "/api/auth/me": {
@@ -135,7 +148,7 @@
                 "tags": [
                     "Authentification"
                 ],
-                "summary": "Obtenir les informations de l'utilisateur connecté",
+                "summary": "Obtenir les informations de l'utilisateur connecté (nécessite le token Bearer)",
                 "operationId": "b9abb1a7a74670a19c215c2c133f14d8",
                 "responses": {
                     "200": {
@@ -160,13 +173,20 @@
                 "responses": {
                     "200": {
                         "description": "Liste des éditions retournée avec succès"
+                    },
+                    "400": {
+                        "description": "Une erreur est survenue lors de la récupération de la liste"
+                    },
+                    "403": {
+                        "description": "Vous n'êtes pas authentifié (token invalide)"
                     }
                 },
-                "security": [
-                    {
+                "security": {
+                    "0": {
                         "sanctum": []
-                    }
-                ]
+                    },
+                    "bearerAuth": {}
+                }
             },
             "post": {
                 "tags": [
@@ -181,17 +201,12 @@
                             "schema": {
                                 "required": [
                                     "title",
-                                    "edition",
                                     "status"
                                 ],
                                 "properties": {
                                     "title": {
                                         "type": "string",
                                         "example": "Figma Challenge 2025"
-                                    },
-                                    "edition": {
-                                        "type": "string",
-                                        "example": "2025"
                                     },
                                     "description": {
                                         "type": "string",
@@ -229,11 +244,12 @@
                         "description": "Données invalides"
                     }
                 },
-                "security": [
-                    {
+                "security": {
+                    "0": {
                         "sanctum": []
-                    }
-                ]
+                    },
+                    "bearerAuth": {}
+                }
             }
         },
         "/api/challenges/{id}": {
@@ -262,11 +278,12 @@
                         "description": "Challenge introuvable"
                     }
                 },
-                "security": [
-                    {
+                "security": {
+                    "0": {
                         "sanctum": []
-                    }
-                ]
+                    },
+                    "bearerAuth": {}
+                }
             },
             "put": {
                 "tags": [
@@ -294,10 +311,6 @@
                                     "title": {
                                         "type": "string",
                                         "example": "Nouvel intitulé"
-                                    },
-                                    "edition": {
-                                        "type": "string",
-                                        "example": "2025"
                                     },
                                     "description": {
                                         "type": "string",
@@ -338,11 +351,12 @@
                         "description": "Validation échouée"
                     }
                 },
-                "security": [
-                    {
+                "security": {
+                    "0": {
                         "sanctum": []
-                    }
-                ]
+                    },
+                    "bearerAuth": {}
+                }
             },
             "delete": {
                 "tags": [
@@ -369,11 +383,12 @@
                         "description": "Introuvable"
                     }
                 },
-                "security": [
-                    {
+                "security": {
+                    "0": {
                         "sanctum": []
-                    }
-                ]
+                    },
+                    "bearerAuth": {}
+                }
             }
         },
         "/api/contact-messages": {
@@ -387,6 +402,12 @@
                     "200": {
                         "description": "Liste des messages"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "post": {
@@ -429,6 +450,12 @@
                     "201": {
                         "description": "Message enregistré"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             }
         },
@@ -456,6 +483,12 @@
                     "404": {
                         "description": "Message non trouvé"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "delete": {
@@ -478,6 +511,12 @@
                     "200": {
                         "description": "Message supprimé"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             }
         },
@@ -486,7 +525,7 @@
                 "tags": [
                     "Notes Jury"
                 ],
-                "summary": "Lister toutes les notes de jury",
+                "summary": "Voir le classement",
                 "operationId": "625a58996d697c0651d8aa409724c1aa",
                 "responses": {
                     "200": {
@@ -506,14 +545,14 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "user_id",
+                                    "jury_id",
                                     "soumission_id",
                                     "graphisme",
                                     "animation",
                                     "navigation"
                                 ],
                                 "properties": {
-                                    "user_id": {
+                                    "jury_id": {
                                         "type": "integer",
                                         "example": 2
                                     },
@@ -523,7 +562,7 @@
                                     },
                                     "graphisme": {
                                         "type": "integer",
-                                        "example": 9
+                                        "example": 30
                                     },
                                     "animation": {
                                         "type": "integer",
@@ -545,7 +584,10 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Note enregistrée"
+                        "description": "Note enregistrée avec succès"
+                    },
+                    "409": {
+                        "description": "Désolé, note déjà enregistrée!"
                     }
                 }
             }
@@ -573,6 +615,81 @@
                     }
                 }
             },
+            "put": {
+                "tags": [
+                    "Notes Jury"
+                ],
+                "summary": "Modifier une note",
+                "operationId": "594ba6b93ce51cff5294c5093585e689",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la note",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "jury_id",
+                                    "soumission_id",
+                                    "graphisme",
+                                    "animation",
+                                    "navigation"
+                                ],
+                                "properties": {
+                                    "jury_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "soumission_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "graphisme": {
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "animation": {
+                                        "type": "integer",
+                                        "example": 8
+                                    },
+                                    "navigation": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "commentaire": {
+                                        "type": "string",
+                                        "example": "Très beau travail globalement"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Note enregistrée avec succès"
+                    },
+                    "403": {
+                        "description": "Vous n'avez pas les permissions requises!"
+                    },
+                    "404": {
+                        "description": "Note non trouvée"
+                    },
+                    "409": {
+                        "description": "Une incohérence dans la requête, vous n\\'êtes pas responsable de cette note"
+                    }
+                }
+            },
             "delete": {
                 "tags": [
                     "Notes Jury"
@@ -596,52 +713,116 @@
                 }
             }
         },
-        "/api/notifications": {
+        "/api/notes-challenger/{id}": {
             "get": {
                 "tags": [
-                    "Notifications"
+                    "Notes par challenger"
                 ],
-                "summary": "Lister toutes les notifications",
-                "operationId": "911565ad9aff9ba7eded3f189509e578",
+                "summary": "Récupérer les notes d'un challenger",
+                "operationId": "ef3e34b532f960009097578b17ee8c62",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du challenger",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Liste des notifications"
+                        "description": "Détail de la note"
+                    }
+                }
+            }
+        },
+        "/api/classement/": {
+            "get": {
+                "tags": [
+                    "Notes par challenger"
+                ],
+                "summary": "Afficher le classement global",
+                "operationId": "986a01e81e62185dbf63e56e418af855",
+                "responses": {
+                    "200": {
+                        "description": "Détail de la note"
+                    }
+                }
+            }
+        },
+        "/api/partners": {
+            "get": {
+                "tags": [
+                    "Partners"
+                ],
+                "summary": "Liste des partenaires",
+                "operationId": "ad7a20817d6cb8421cd607a4eae29897",
+                "responses": {
+                    "200": {
+                        "description": "Liste des partenaires"
                     }
                 }
             },
             "post": {
                 "tags": [
-                    "Notifications"
+                    "Partners"
                 ],
-                "summary": "Créer une notification",
-                "operationId": "91f8e779a9e46cb5cdda969e5a928a94",
+                "summary": "Ajouter un partenaire",
+                "description": "Permet d'enregistrer un nouveau partenaire pour un challenge donné.",
+                "operationId": "2921a83aea332ddd7e06ded02968410e",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "title",
-                                    "content",
-                                    "audience"
+                                    "name",
+                                    "logo",
+                                    "type"
                                 ],
                                 "properties": {
-                                    "title": {
+                                    "name": {
+                                        "description": "Nom du partenaire",
                                         "type": "string",
-                                        "example": "Deadline demain !"
+                                        "example": "MTN Corp"
                                     },
-                                    "content": {
+                                    "logo": {
+                                        "description": "Nom du fichier logo du partenaire",
                                         "type": "string",
-                                        "example": "N'oubliez pas de soumettre votre projet avant minuit."
+                                        "example": "mtn-logo.png"
                                     },
-                                    "audience": {
+                                    "description": {
+                                        "description": "Description facultative du partenaire",
                                         "type": "string",
-                                        "example": "challengers"
+                                        "example": "MTN est une entreprise leader dans le domaine des télécommunications."
                                     },
-                                    "scheduled_at": {
+                                    "type": {
+                                        "description": "Type de partenariat. Peut être : gold, vip ou standard",
                                         "type": "string",
-                                        "format": "date-time",
-                                        "example": "2025-06-24T12:00:00"
+                                        "enum": [
+                                            "gold",
+                                            "vip",
+                                            "standard"
+                                        ],
+                                        "example": "gold"
+                                    },
+                                    "website": {
+                                        "description": "Site web officiel du partenaire (optionnel)",
+                                        "type": "string",
+                                        "format": "url",
+                                        "example": "https://www.mtn.com"
+                                    },
+                                    "visible": {
+                                        "description": "Indique si le partenaire est visible publiquement",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "position": {
+                                        "description": "Position d'affichage du partenaire dans une liste triée (optionnel)",
+                                        "type": "integer",
+                                        "example": 4
                                     }
                                 },
                                 "type": "object"
@@ -651,22 +832,23 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Notification créée"
+                        "description": "Partenaire créé avec succès"
                     }
                 }
             }
         },
-        "/api/notifications/{id}": {
+        "/api/partners/{id}": {
             "get": {
                 "tags": [
-                    "Notifications"
+                    "Partners"
                 ],
-                "summary": "Afficher une notification",
-                "operationId": "f2edf725f41dd6c9a9338a6a7b39d779",
+                "summary": "Afficher un partenaire",
+                "operationId": "3d2e93d00ae9df1efcbf6eecbf22496c",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID du partenaire à afficher",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -675,20 +857,105 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Détail de la notification"
+                        "description": "Détails du partenaire"
+                    },
+                    "404": {
+                        "description": "Partenaire non trouvé"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Partners"
+                ],
+                "summary": "Mettre à jour un partenaire",
+                "description": "Permet de modifier les informations d'un partenaire existant.",
+                "operationId": "183edc72e7cf428ad78060fbe8c13fce",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du partenaire à modifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Nouveau nom du partenaire",
+                                        "type": "string",
+                                        "example": "MTN Business"
+                                    },
+                                    "logo": {
+                                        "description": "Logo du partenaire (nom du fichier)",
+                                        "type": "string",
+                                        "example": "mtn-new-logo.png"
+                                    },
+                                    "description": {
+                                        "description": "Description mise à jour",
+                                        "type": "string",
+                                        "example": "Partenaire technologique majeur."
+                                    },
+                                    "type": {
+                                        "description": "Type de partenariat modifié",
+                                        "type": "string",
+                                        "enum": [
+                                            "gold",
+                                            "vip",
+                                            "standard"
+                                        ],
+                                        "example": "vip"
+                                    },
+                                    "website": {
+                                        "description": "Site web mis à jour",
+                                        "type": "string",
+                                        "format": "url",
+                                        "example": "https://business.mtn.com"
+                                    },
+                                    "visible": {
+                                        "description": "Met à jour la visibilité du partenaire",
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "position": {
+                                        "description": "Nouvelle position dans l'affichage trié",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Partenaire mis à jour avec succès"
+                    },
+                    "404": {
+                        "description": "Partenaire non trouvé"
                     }
                 }
             },
             "delete": {
                 "tags": [
-                    "Notifications"
+                    "Partners"
                 ],
-                "summary": "Supprimer une notification",
-                "operationId": "54c4eb5ec5dc0d1e2916cec2fced1056",
+                "summary": "Supprimer un partenaire",
+                "description": "Supprime un partenaire existant via son identifiant.",
+                "operationId": "090f0eff1c7e01b285b1879b765d3a6c",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID du partenaire à supprimer",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -697,7 +964,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Notification supprimée"
+                        "description": "Partenaire supprimé avec succès"
+                    },
+                    "404": {
+                        "description": "Partenaire non trouvé"
                     }
                 }
             }
@@ -713,6 +983,12 @@
                     "200": {
                         "description": "Liste des projets"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "post": {
@@ -735,7 +1011,19 @@
                                 "properties": {
                                     "title": {
                                         "type": "string",
-                                        "example": "Repenser une plateforme de transport"
+                                        "example": "Repenser la plateforme YANGO"
+                                    },
+                                    "challenge_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "closed"
+                                        ],
+                                        "example": "active"
                                     },
                                     "description": {
                                         "type": "string",
@@ -744,10 +1032,6 @@
                                     "cover": {
                                         "type": "string",
                                         "example": "project.png"
-                                    },
-                                    "challenge_id": {
-                                        "type": "integer",
-                                        "example": 1
                                     },
                                     "category": {
                                         "type": "string",
@@ -772,7 +1056,16 @@
                 "responses": {
                     "201": {
                         "description": "Projet créé"
+                    },
+                    "422": {
+                        "description": "La validation des donnees a echoue"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             }
         },
@@ -797,6 +1090,12 @@
                     "200": {
                         "description": "Projet détaillé"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "put": {
@@ -828,7 +1127,16 @@
                 "responses": {
                     "200": {
                         "description": "Projet mis à jour"
+                    },
+                    "404": {
+                        "description": "Le projet que vous recherchez n\\'existe pas"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "delete": {
@@ -850,6 +1158,9 @@
                 "responses": {
                     "200": {
                         "description": "Projet supprimé"
+                    },
+                    "404": {
+                        "description": "Le projet que vous recherchez n'existe pas"
                     }
                 }
             }
@@ -865,6 +1176,12 @@
                     "200": {
                         "description": "Liste des ressources"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "post": {
@@ -920,6 +1237,12 @@
                     "201": {
                         "description": "Ressource ajoutée"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             }
         },
@@ -944,6 +1267,12 @@
                     "200": {
                         "description": "Détail de la ressource"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "put": {
@@ -997,21 +1326,30 @@
                 "responses": {
                     "200": {
                         "description": "Ressource supprimée"
+                    },
+                    "422": {
+                        "description": "Ressource introuvable"
                     }
                 }
             }
         },
-        "/api/settings": {
+        "/api/site-settings": {
             "get": {
                 "tags": [
                     "Settings"
                 ],
                 "summary": "Afficher les informations générales du site",
-                "operationId": "a689529a353f6eda06b5555d05795c50",
+                "operationId": "2e440916853fa02d775eef0bdce27c85",
                 "responses": {
                     "200": {
                         "description": "Informations récupérées"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "put": {
@@ -1019,7 +1357,7 @@
                     "Settings"
                 ],
                 "summary": "Mettre à jour les informations du site",
-                "operationId": "bc887b395fba31757442775e8561b1b3",
+                "operationId": "58897d7321c5f61a628161e0bb51eb11",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1068,28 +1406,42 @@
                     "200": {
                         "description": "Informations mises à jour"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             }
         },
-        "/api/soumissions": {
+        "/api/submissions": {
             "get": {
                 "tags": [
-                    "Soumissions"
+                    "Submissions"
                 ],
                 "summary": "Lister toutes les soumissions",
-                "operationId": "6b1262672e03e053593f03a69d83d753",
+                "operationId": "459cf2c3b5b0164f1e51d570197ed8dd",
                 "responses": {
                     "200": {
                         "description": "Liste des soumissions"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
-            },
+            }
+        },
+        "/api/subscribe-project": {
             "post": {
                 "tags": [
-                    "Soumissions"
+                    "Projects"
                 ],
-                "summary": "Soumettre un projet",
-                "operationId": "87d20d4bf70e96a918679aa42db0ca0a",
+                "summary": "S'inscrire à un projet",
+                "operationId": "2d70fd146b8011de37794a29c136519d",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1097,9 +1449,7 @@
                             "schema": {
                                 "required": [
                                     "user_id",
-                                    "project_id",
-                                    "challenge_id",
-                                    "inscription_date"
+                                    "project_id"
                                 ],
                                 "properties": {
                                     "user_id": {
@@ -1108,31 +1458,7 @@
                                     },
                                     "project_id": {
                                         "type": "integer",
-                                        "example": 3
-                                    },
-                                    "challenge_id": {
-                                        "type": "integer",
-                                        "example": 2
-                                    },
-                                    "inscription_date": {
-                                        "type": "string",
-                                        "format": "date-time",
-                                        "example": "2025-06-15T18:00:00"
-                                    },
-                                    "figma_link": {
-                                        "type": "string",
-                                        "example": "https://figma.com/file/xyz"
-                                    },
-                                    "soumission_date": {
-                                        "type": "string",
-                                        "format": "date-time"
-                                    },
-                                    "commentaire": {
-                                        "type": "string"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "example": "soumis"
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -1142,18 +1468,27 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Soumission enregistrée"
+                        "description": "Inscription avec succes"
+                    },
+                    "409": {
+                        "description": "Déjà inscrit à un projet"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             }
         },
-        "/api/soumissions/{id}": {
+        "/api/submissions/{id}": {
             "get": {
                 "tags": [
-                    "Soumissions"
+                    "Submissions"
                 ],
                 "summary": "Afficher une soumission",
-                "operationId": "d65405d20e7cc8d77bb6be32729ba964",
+                "operationId": "aca7bd587971cfdce7128b8dc783bd2a",
                 "parameters": [
                     {
                         "name": "id",
@@ -1168,60 +1503,40 @@
                     "200": {
                         "description": "Soumission détaillée"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "put": {
                 "tags": [
-                    "Soumissions"
+                    "Submissions"
                 ],
-                "summary": "Mettre à jour une soumission",
-                "operationId": "f1559f8bd2b5d931f806e581ff7990d6",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
+                "summary": "Faire / modifier une soumission",
+                "operationId": "b347c3d56fc64418b647000b821408c3",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/StoreSoumissionRequest"
+                                "$ref": "#/components/schemas/UpdateSoumissionRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Soumission mise à jour"
+                        "description": "Soumission faite avec succes"
                     }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Soumissions"
-                ],
-                "summary": "Supprimer une soumission",
-                "operationId": "dee25ebc18fdc8f7767884cb3260716b",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Soumission supprimée"
-                    }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             }
         },
@@ -1236,6 +1551,12 @@
                     "200": {
                         "description": "Liste des utilisateurs"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             }
         },
@@ -1271,6 +1592,12 @@
                     "404": {
                         "description": "Utilisateur non trouvé"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "put": {
@@ -1342,6 +1669,12 @@
                     "422": {
                         "description": "Validation échouée"
                     }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
                 }
             },
             "delete": {
@@ -1368,34 +1701,12 @@
                     "404": {
                         "description": "Utilisateur non trouvé"
                     }
-                }
-            }
-        },
-        "/api/users/create": {
-            "post": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "ajouter un utilisateur",
-                "operationId": "d37ea9642c2cfbe867361ca7da44eec7",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID de l'utilisateur",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Utilisateur supprimé"
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
                     },
-                    "404": {
-                        "description": "Utilisateur non trouvé"
-                    }
+                    "bearerAuth": {}
                 }
             }
         }
@@ -1533,9 +1844,7 @@
             "StoreSoumissionRequest": {
                 "required": [
                     "user_id",
-                    "project_id",
-                    "challenge_id",
-                    "inscription_date"
+                    "project_id"
                 ],
                 "properties": {
                     "user_id": {
@@ -1545,24 +1854,23 @@
                     "project_id": {
                         "type": "integer",
                         "example": 3
-                    },
-                    "challenge_id": {
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateSoumissionRequest": {
+                "required": [
+                    "user_id",
+                    "figma_link"
+                ],
+                "properties": {
+                    "user_id": {
                         "type": "integer",
-                        "example": 2
-                    },
-                    "inscription_date": {
-                        "type": "string",
-                        "format": "datetime",
-                        "example": "2025-07-01T10:00:00Z"
+                        "example": 1
                     },
                     "figma_link": {
                         "type": "string",
                         "example": "https://figma.com/file/abc123"
-                    },
-                    "soumission_date": {
-                        "type": "string",
-                        "format": "datetime",
-                        "example": "2025-07-10T22:00:00Z"
                     },
                     "commentaire": {
                         "type": "string",
@@ -1706,6 +2014,13 @@
                 },
                 "type": "object"
             }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
         }
     },
     "tags": [
@@ -1726,8 +2041,12 @@
             "description": "Notes Jury"
         },
         {
-            "name": "Notifications",
-            "description": "Notifications"
+            "name": "Notes par challenger",
+            "description": "Notes par challenger"
+        },
+        {
+            "name": "Partners",
+            "description": "Partners"
         },
         {
             "name": "Projects",
@@ -1742,8 +2061,8 @@
             "description": "Settings"
         },
         {
-            "name": "Soumissions",
-            "description": "Soumissions"
+            "name": "Submissions",
+            "description": "Submissions"
         },
         {
             "name": "Users",

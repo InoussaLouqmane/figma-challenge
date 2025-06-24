@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create(Challenge::TABLENAME, function (Blueprint $table) {
             $table->id();
             $table->string(Challenge::COL_TITLE);
-            $table->string(Challenge::COL_EDITION);
             $table->text(Challenge::COL_DESCRIPTION)->nullable();
             $table->string(Challenge::COL_COVER)->nullable();
             $table->enum(Challenge::COL_STATUS, array_column(ChallengeStatus::cases(), 'value'))->default(ChallengeStatus::Draft->value);

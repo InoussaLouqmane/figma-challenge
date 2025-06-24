@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId(Soumission::COL_USER_ID)->constrained()->onDelete('cascade');
             $table->foreignId(Soumission::COL_PROJECT_ID)->constrained()->onDelete('cascade');
             $table->foreignId(Soumission::COL_CHALLENGE_ID)->constrained()->onDelete('cascade');
-            $table->timestamp(Soumission::COL_INSCRIPTION_DATE);
             $table->string(Soumission::COL_FIGMA_LINK)->nullable();
             $table->timestamp(Soumission::COL_SOUMISSION_DATE)->nullable();
             $table->text(Soumission::COL_COMMENTAIRE)->nullable();

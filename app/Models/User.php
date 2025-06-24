@@ -5,6 +5,7 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,9 +61,25 @@ class User extends Authenticatable
 
     // Relations
 
-    public function soumissions(): HasMany
+    public function soumissions(): hasMany
     {
         return $this->hasMany(Soumission::class);
+    }
+
+    public function subscriptions(): BelongsToMany
+    {
+      return $this->belongsToMany(
+          Project::class,
+          Soumission::TABLENAME,
+          Soumission::COL_USER_ID,
+          Soumission::COL_PROJECT_ID
+      )->withPivot([
+          Soumission::COL_CHALLENGE_ID,
+          Soumission::COL_STATUS,
+          Soumission::COL_SOUMISSION_DATE,
+          Soumission::COL_FIGMA_LINK
+
+      ])->withTimestamps();
     }
 
     public function notes(): HasMany
@@ -73,5 +90,33 @@ class User extends Authenticatable
     public function resources(): HasMany
     {
         return $this->hasMany(Resource::class, 'uploaded_by');
+    }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(
+            Notification::class,
+        NotificationUser::TABLENAME,
+        NotificationUser::USER_ID,
+        NotificationUser::NOTIFICATION_ID
+        )->withPivot([
+            NotificationUser::READ_AT
+        ])->withTimestamps();
+    }
+
+    public function noteSoumissions(): HasMany{
+        return  $this->belongsToMany(
+            User::class,
+            NoteJury::TABLENAME,
+            NoteJury::COL_USER_ID,
+            NoteJury::COL_SOUMISSION_ID,
+
+        )->withPivot(
+            NoteJury::COL_GRAPHISME,
+            NoteJury::COL_ANIMATION,
+            NoteJury::COL_NAVIGATION,
+            NoteJury::COL_COMMENTAIRE,
+
+        )->withTimestamps();
     }
 }

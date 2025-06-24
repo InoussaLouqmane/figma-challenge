@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Challenge;
+use App\Models\Soumission;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateSoumissionRequest extends FormRequest
 {
@@ -14,6 +18,7 @@ class UpdateSoumissionRequest extends FormRequest
         return true;
     }
 
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,8 +27,17 @@ class UpdateSoumissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'figma_link' => 'nullable|url',  // Lien Figma, facultatif, mais si fourni, il doit être une URL valide
-            'status' => 'required|in:en_attente,soumis,hors_delai',
+            Soumission::COL_USER_ID => 'required|exists:users,id',
+            Soumission::COL_FIGMA_LINK => 'required|url',
+            Soumission::COL_COMMENTAIRE => 'sometimes|string',
         ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

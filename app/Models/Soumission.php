@@ -4,12 +4,14 @@ namespace App\Models;
 
 use App\Enums\SoumissionStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Soumission extends Pivot
 {
     use HasFactory;
 
+    protected $table = 'soumissions';
     public const TABLENAME = 'soumissions';
 
     public const COL_ID = 'id';
@@ -56,8 +58,24 @@ class Soumission extends Pivot
         return $this->belongsTo(Challenge::class);
     }
 
-    public function notes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function notes(): HasMany
     {
-        return $this->hasMany(NoteJury::class);
+        return $this->hasMany(NoteJury::class, NoteJury::COL_SOUMISSION_ID,  NoteJury::COL_ID);
+    }
+
+    public function noteJury(){
+        return  $this->belongsToMany(
+            User::class,
+            NoteJury::TABLENAME,
+            NoteJury::COL_SOUMISSION_ID,
+            NoteJury::COL_USER_ID
+
+        )->withPivot(
+            NoteJury::COL_GRAPHISME,
+            NoteJury::COL_ANIMATION,
+            NoteJury::COL_NAVIGATION,
+            NoteJury::COL_COMMENTAIRE,
+
+        )->withTimestamps();
     }
 }

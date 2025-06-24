@@ -5,16 +5,16 @@ namespace App\Models;
 use App\Enums\ChallengeStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class Challenge extends Model
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     public const TABLENAME = 'challenges';
 
     public const COL_ID = 'id';
     public const COL_TITLE = 'title';
-    public const COL_EDITION = 'edition';
     public const COL_DESCRIPTION = 'description';
     public const COL_COVER = 'cover';
     public const COL_STATUS = 'status';
@@ -24,7 +24,6 @@ class Challenge extends Model
 
     protected $fillable = [
         self::COL_TITLE,
-        self::COL_EDITION,
         self::COL_DESCRIPTION,
         self::COL_COVER,
         self::COL_STATUS,

@@ -2,12 +2,22 @@
 
 namespace App\Http\Requests;
 
+use App\Models\NotificationUser;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreContactMessageRequest extends FormRequest
+class UpdateNotificationRequest extends FormRequest
 {
+
+    public function prepareForValidation()
+    {
+        $this->merge([
+            'read_at' => now(),
+        ]);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -19,14 +29,14 @@ class StoreContactMessageRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'message' => 'required|string',
+            NotificationUser::USER_ID => 'required|exists:users,id',
+            NotificationUser::READ_AT => 'sometimes|date',
+
         ];
     }
 

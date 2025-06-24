@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -15,8 +17,9 @@ class AuthController extends Controller
     /**
      * @OA\Post(
      *     path="/api/auth/register",
-     *     summary="Inscription d'un challenger",
+     *     summary="Inscription d'un utilisateur",
      *     tags={"Authentification"},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -25,28 +28,43 @@ class AuthController extends Controller
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="12345678"),
      *             @OA\Property(property="password_confirmation", type="string", format="password", example="12345678"),
-     *             @OA\Property(property="country", type="string", example="Benin")
+     *             @OA\Property(property="country", type="string", example="Benin"),
+     *             @OA\Property(property="role", type="string", example="challenger", nullable=true),
+     *             @OA\Property(property="phone", type="string", example="+229 0166662946", nullable=true)
      *         )
      *     ),
      *     @OA\Response(response=201, description="Utilisateur inscrit avec succès"),
-     *     @OA\Response(response=422, description="Validation échouée")
+     *     @OA\Response(response=422, description="La validation des données a échoué"),
+     *     @OA\Response(response=500, description="Erreur du côté serveur")
      * )
      */
-    public function register(Request $request): \Illuminate\Http\JsonResponse
+    public function register(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-            'country' => 'required|string|max:100',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|string|confirmed|min:6',
+                'country' => 'required|string|max:100',
+                'role' => 'sometimes|string|max:100',
+                'phone' => 'nullable|string|max:100',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'La validation des données a échoué',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        $assignedRole = $validated['role'] ?? 'challenger';
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
+            'password' => Hash::make($validated['password']),
             'country' => $validated['country'],
-            'role' => 'challenger',
+            'role' => $assignedRole,
+            'phone' => $validated['phone'] ?? null,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -56,6 +74,7 @@ class AuthController extends Controller
             'token' => $token,
         ], 201);
     }
+
 
     /**
      * @OA\Post(
@@ -71,18 +90,32 @@ class AuthController extends Controller
      *         )
      *     ),
      *     @OA\Response(response=200, description="Connexion réussie"),
-     *     @OA\Response(response=422, description="Identifiants invalides")
+     *     @OA\Response(response=403, description="Identifiants invalides"),
+     *     @OA\Response(response=422, description="La validation des données a échoué")
      * )
      */
-    public function login(Request $request): \Illuminate\Http\JsonResponse
+    public function login(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            $validated = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required|string',
+            ]);
+        }catch (ValidationException $e){
+            return response()->json([
+                'message' => 'La validation des données a échoué',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+
 
         $user = User::where('email', $validated['email'])->first();
-
+        if($user === null){
+            return response()->json([
+                'message' => 'Utilisateur non trouve',
+            ], 404);
+        }
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Les identifiants sont invalides.'],
@@ -100,31 +133,55 @@ class AuthController extends Controller
     /**
      * @OA\Post(
      *     path="/api/auth/logout",
-     *     summary="Déconnexion de l'utilisateur",
+     *     summary="Déconnexion de l'utilisateur (nécessite le token Bearer)",
      *     tags={"Authentification"},
-     *     security={{"sanctum": {}}},
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Response(response=200, description="Déconnecté avec succès")
      * )
      */
-    public function logout(Request $request): \Illuminate\Http\JsonResponse
+    public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        try {
+            $request->user()->currentAccessToken()->delete();
+            return response()->json(['message' => 'Déconnexion réussie']);
+        }catch (Exception $e){
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la deconnexion',
+                'errors' => $e->errors(),
+            ], 405);
+        }
 
-        return response()->json(['message' => 'Déconnexion réussie']);
+
+
     }
 
     /**
      * @OA\Get(
      *     path="/api/auth/me",
-     *     summary="Obtenir les informations de l'utilisateur connecté",
+     *     summary="Obtenir les informations de l'utilisateur connecté (nécessite le token Bearer)",
      *     tags={"Authentification"},
      *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     @OA\Response(response=200, description="Données utilisateur renvoyées")
      * )
      */
-    public function me(Request $request): \Illuminate\Http\JsonResponse
+    public function me(Request $request): JsonResponse
     {
-        return response()->json($request->user());
+
+        if (!$request->user()) {
+                return response()->json([
+                    'message' => 'Non autorisé. Token manquant ou invalide.',
+                ], 401);
+        }
+
+        try {
+            return response()->json($request->user());
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des données utilisateur',
+                'errors' => $e->getMessage(), // Affiche l'erreur spécifique
+            ], 500); // Si une autre erreur survient, retourne 500
+        }
     }
+
 }
 
