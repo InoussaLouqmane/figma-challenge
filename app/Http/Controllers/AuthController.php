@@ -7,6 +7,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,7 @@ class AuthController extends Controller
      *             @OA\Property(property="phone", type="string", example="+229 0166662946", nullable=true),
      *
      *
-     *             @OA\Property(property="objective", type="string", example="Prendre l'argent pour aller doter ma femme"),
+     *             @OA\Property(property="objective", type="string", example="Prendre largent pour aller doter ma femme"),
      *             @OA\Property(property="acquisitionChannel", type="string", example="Twitter"),
      *             @OA\Property(property="linkToPortfolio", type="url", example="https://www.google.com"),
      *             @OA\Property(property="figmaSkills", type="string", enum={"low", "medium", "high"}, example="low"),
@@ -49,6 +50,7 @@ class AuthController extends Controller
      *     @OA\Response(response=500, description="Erreur du côté serveur")
      * )
      */
+
     public function register(Request $request): JsonResponse
     {
         try {
@@ -57,7 +59,7 @@ class AuthController extends Controller
                 'email' => 'required|email|unique:users',
                 'password' => 'required|string|confirmed|min:6',
                 'country' => 'required|string|max:100',
-                'role' => 'sometimes|string|in:challenger,admin,jury',
+                'role' => 'sometimes|string|max:100',
                 'phone' => 'nullable|string|max:100',
 
                 RegistrationInfos::Objective => 'required|string',
@@ -73,37 +75,50 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $assignedRole = $validated['role'] ?? 'challenger';
+        try {
+            DB::beginTransaction();
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'country' => $validated['country'],
-            'role' => $assignedRole,
-            'phone' => $validated['phone'] ?? null,
-        ]);
+            $assignedRole = $validated['role'] ?? 'challenger';
 
-        $user->RegistrationInfos()->create([
-            RegistrationInfos::USER_ID => $user->id,
-            RegistrationInfos::Objective => $validated[RegistrationInfos::Objective],
-            RegistrationInfos::UXSkills => $validated[RegistrationInfos::UXSkills],
-            RegistrationInfos::LinkToPortfolio => $validated[RegistrationInfos::LinkToPortfolio],
-            RegistrationInfos::AcquisitionChannel => $validated[RegistrationInfos::AcquisitionChannel],
-            RegistrationInfos::FigmaSkills => $validated[RegistrationInfos::FigmaSkills],
-            RegistrationInfos::FirstAttempt => true,
-            RegistrationInfos::isActive => true,
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'country' => $validated['country'],
+                'role' => $assignedRole,
+                'phone' => $validated['phone'] ?? null,
+            ]);
 
-        ]);
+            $user->registrationInfos()->create([
+                RegistrationInfos::USER_ID => $user->id,
+                RegistrationInfos::Objective => $validated[RegistrationInfos::Objective],
+                RegistrationInfos::UXSkills => $validated[RegistrationInfos::UXSkills],
+                RegistrationInfos::LinkToPortfolio => $validated[RegistrationInfos::LinkToPortfolio],
+                RegistrationInfos::AcquisitionChannel => $validated[RegistrationInfos::AcquisitionChannel],
+                RegistrationInfos::FigmaSkills => $validated[RegistrationInfos::FigmaSkills],
+                RegistrationInfos::FirstAttempt => true,
+                RegistrationInfos::isActive => true,
+            ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+            DB::commit();
 
-        return response()->json([
-            'user' => $user,
-            'registrationInfos' => $user->RegistrationInfos,
-            'token' => $token,
-        ], 201);
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+                'registration_infos' => $user->registrationInfos,
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de l’inscription',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
 
 
     /**

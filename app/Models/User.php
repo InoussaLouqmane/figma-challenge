@@ -121,6 +121,6 @@ class User extends Authenticatable
     }
 
     public function registrationInfos(){
-        $this->hasOne(RegistrationInfos::class);
+        return $this->hasOne(RegistrationInfos::class, RegistrationInfos::USER_ID, User::COL_ID);
     }
 }

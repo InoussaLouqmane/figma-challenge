@@ -30,6 +30,7 @@ class RegistrationInfos extends Model
         self::AcquisitionChannel,
         self::LinkToPortfolio,
         self::FirstAttempt,
+        self::isActive,
     ];
     protected $cast = [
         self::FigmaSkills => FigmaSkills::class,

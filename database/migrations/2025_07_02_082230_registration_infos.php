@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean(RegistrationInfos::isActive)->default(true);
             $table->enum(RegistrationInfos::FigmaSkills, array_column(FigmaSkills::cases(), 'value'));
             $table->enum(RegistrationInfos::UXSkills, array_column(UXSkills::cases(), 'value'));
+            $table->timestamps();
         }
 
         );

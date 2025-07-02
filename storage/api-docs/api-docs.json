@@ -65,7 +65,7 @@
                                     },
                                     "objective": {
                                         "type": "string",
-                                        "example": "Prendre l'argent pour aller doter ma femme"
+                                        "example": "Prendre largent pour aller doter ma femme"
                                     },
                                     "acquisitionChannel": {
                                         "type": "string",
@@ -73,7 +73,7 @@
                                     },
                                     "linkToPortfolio": {
                                         "type": "url",
-                                        "example": "Twitter"
+                                        "example": "https://www.google.com"
                                     },
                                     "figmaSkills": {
                                         "type": "string",
