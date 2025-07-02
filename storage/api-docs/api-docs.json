@@ -22,7 +22,6 @@
                                     "email",
                                     "password",
                                     "password_confirmation",
-                                    "country",
                                     "objective",
                                     "acquisitionChannel",
                                     "linkToPortfolio",
@@ -51,7 +50,8 @@
                                     },
                                     "country": {
                                         "type": "string",
-                                        "example": "Benin"
+                                        "example": "Benin",
+                                        "nullable": true
                                     },
                                     "role": {
                                         "type": "string",

@@ -85,11 +85,11 @@ namespace App\Http\Controllers;
  *
  * @OA\Schema(
  *     schema="StoreUserRequest",
- *     required={"name", "email", "password", "country"},
+ *     required={"name", "email", "password",},
  *     @OA\Property(property="name", type="string", example="Louqmane Inoussa"),
  *     @OA\Property(property="email", type="string", format="email", example="louqmane@example.com"),
  *     @OA\Property(property="password", type="string", format="password", example="strongPass123"),
- *     @OA\Property(property="country", type="string", example="Bénin"),
+ *     @OA\Property(property="country", type="string", example="Bénin", nullable=true),
  *     @OA\Property(property="phone", type="string", example="+229 97 00 00 00"),
  *     @OA\Property(property="bio", type="string", example="Designer passionné par l’UX"),
  *     @OA\Property(property="role", type="string", enum={"admin", "jury", "challenger"}, example="challenger"),

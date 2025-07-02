@@ -31,7 +31,7 @@ class StoreUserRequest extends FormRequest
             'role' => 'nullable|string',
             'phone' => 'nullable|string',
             'bio' => 'nullable|string',
-            'country' => 'required|string|max:100',
+            'country' => 'sometimes|string|max:100',
             'photo' => 'nullable|string',
         ];
     }

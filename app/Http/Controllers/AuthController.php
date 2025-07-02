@@ -25,14 +25,14 @@ class AuthController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name","email","password","password_confirmation","country", "objective",
+     *             required={"name","email","password","password_confirmation", "objective",
      *                      "acquisitionChannel", "linkToPortfolio", "figmaSkills", "uxSkills"},
      *
      *             @OA\Property(property="name", type="string", example="John Doe"),
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="12345678"),
      *             @OA\Property(property="password_confirmation", type="string", format="password", example="12345678"),
-     *             @OA\Property(property="country", type="string", example="Benin"),
+     *             @OA\Property(property="country", type="string", example="Benin", nullable=true),
      *             @OA\Property(property="role", type="string", example="challenger", nullable=true),
      *             @OA\Property(property="phone", type="string", example="+229 0166662946", nullable=true),
      *
@@ -58,7 +58,7 @@ class AuthController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|string|confirmed|min:6',
-                'country' => 'required|string|max:100',
+                'country' => 'nullable|string|max:100',
                 'role' => 'sometimes|string|max:100',
                 'phone' => 'nullable|string|max:100',
 
@@ -84,7 +84,7 @@ class AuthController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
-                'country' => $validated['country'],
+                'country' => $validated['country']?? null,
                 'role' => $assignedRole,
                 'phone' => $validated['phone'] ?? null,
             ]);

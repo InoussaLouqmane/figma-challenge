@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string(User::COL_EMAIL)->unique();
             $table->string(User::COL_PASSWORD);
             $table->enum(User::COL_ROLE, array_column(UserRole::cases(), 'value'));
-            $table->string(User::COL_COUNTRY);
+            $table->string(User::COL_COUNTRY)->nullable();
             $table->string(User::COL_PHONE)->nullable();
             $table->text(User::COL_BIO)->nullable();
             $table->string(User::COL_PHOTO)->nullable();

@@ -266,7 +266,7 @@ class NoteJuryController extends Controller
                 $scores->push([
                     'challenger_id' => $soumission->user->id,
                     'name' => $soumission->user->name,
-                    'country' => $soumission->user->country,
+                    'country' => $soumission->user->country ?? null,
                     'total_graphisme' => $graphisme,
                     'total_animation' => $animation,
                     'total_navigation' => $navigation,
