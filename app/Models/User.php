@@ -119,4 +119,8 @@ class User extends Authenticatable
 
         )->withTimestamps();
     }
+
+    public function registrationInfos(){
+        $this->hasOne(RegistrationInfos::class);
+    }
 }

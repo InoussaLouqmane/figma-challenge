@@ -22,7 +22,12 @@
                                     "email",
                                     "password",
                                     "password_confirmation",
-                                    "country"
+                                    "country",
+                                    "objective",
+                                    "acquisitionChannel",
+                                    "linkToPortfolio",
+                                    "figmaSkills",
+                                    "uxSkills"
                                 ],
                                 "properties": {
                                     "name": {
@@ -57,6 +62,36 @@
                                         "type": "string",
                                         "example": "+229 0166662946",
                                         "nullable": true
+                                    },
+                                    "objective": {
+                                        "type": "string",
+                                        "example": "Prendre l'argent pour aller doter ma femme"
+                                    },
+                                    "acquisitionChannel": {
+                                        "type": "string",
+                                        "example": "Twitter"
+                                    },
+                                    "linkToPortfolio": {
+                                        "type": "url",
+                                        "example": "Twitter"
+                                    },
+                                    "figmaSkills": {
+                                        "type": "string",
+                                        "enum": [
+                                            "low",
+                                            "medium",
+                                            "high"
+                                        ],
+                                        "example": "low"
+                                    },
+                                    "uxSkills": {
+                                        "type": "string",
+                                        "enum": [
+                                            "low",
+                                            "medium",
+                                            "high"
+                                        ],
+                                        "example": "low"
                                     }
                                 },
                                 "type": "object"

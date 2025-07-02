@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RegistrationInfos;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -23,14 +24,24 @@ class AuthController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name","email","password","password_confirmation","country"},
+     *             required={"name","email","password","password_confirmation","country", "objective",
+     *                      "acquisitionChannel", "linkToPortfolio", "figmaSkills", "uxSkills"},
+     *
      *             @OA\Property(property="name", type="string", example="John Doe"),
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="12345678"),
      *             @OA\Property(property="password_confirmation", type="string", format="password", example="12345678"),
      *             @OA\Property(property="country", type="string", example="Benin"),
      *             @OA\Property(property="role", type="string", example="challenger", nullable=true),
-     *             @OA\Property(property="phone", type="string", example="+229 0166662946", nullable=true)
+     *             @OA\Property(property="phone", type="string", example="+229 0166662946", nullable=true),
+     *
+     *
+     *             @OA\Property(property="objective", type="string", example="Prendre l'argent pour aller doter ma femme"),
+     *             @OA\Property(property="acquisitionChannel", type="string", example="Twitter"),
+     *             @OA\Property(property="linkToPortfolio", type="url", example="Twitter"),
+     *             @OA\Property(property="figmaSkills", type="string", enum={"low", "medium", "high"}, example="low"),
+     *             @OA\Property(property="uxSkills", type="string", enum={"low", "medium", "high"}, example="low"),
+     *
      *         )
      *     ),
      *     @OA\Response(response=201, description="Utilisateur inscrit avec succès"),
@@ -46,8 +57,14 @@ class AuthController extends Controller
                 'email' => 'required|email|unique:users',
                 'password' => 'required|string|confirmed|min:6',
                 'country' => 'required|string|max:100',
-                'role' => 'sometimes|string|max:100',
+                'role' => 'sometimes|string|in:challenger,admin,jury',
                 'phone' => 'nullable|string|max:100',
+
+                RegistrationInfos::Objective => 'required|string',
+                RegistrationInfos::UXSkills => 'required|string|in:low,medium,high',
+                RegistrationInfos::FigmaSkills => 'required|string|in:low,medium,high',
+                RegistrationInfos::LinkToPortfolio => 'required|url',
+                RegistrationInfos::AcquisitionChannel => 'required|string'
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -67,10 +84,23 @@ class AuthController extends Controller
             'phone' => $validated['phone'] ?? null,
         ]);
 
+        $user->RegistrationInfos()->create([
+            RegistrationInfos::USER_ID => $user->id,
+            RegistrationInfos::Objective => $validated[RegistrationInfos::Objective],
+            RegistrationInfos::UXSkills => $validated[RegistrationInfos::UXSkills],
+            RegistrationInfos::LinkToPortfolio => $validated[RegistrationInfos::LinkToPortfolio],
+            RegistrationInfos::AcquisitionChannel => $validated[RegistrationInfos::AcquisitionChannel],
+            RegistrationInfos::FigmaSkills => $validated[RegistrationInfos::FigmaSkills],
+            RegistrationInfos::FirstAttempt => true,
+            RegistrationInfos::isActive => true,
+
+        ]);
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'user' => $user,
+            'registrationInfos' => $user->RegistrationInfos,
             'token' => $token,
         ], 201);
     }
