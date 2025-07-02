@@ -15,12 +15,13 @@ class ChallengeFactory extends Factory
     {
         $statuses = ['draft', 'open', 'closed'];
 
+        $endDate = $this->faker->dateTimeBetween('+7 days', '+61 days');
         return [
             Challenge::COL_TITLE => 'Figma Challenge 2025',
             Challenge::COL_DESCRIPTION => $this->faker->paragraph(),
             Challenge::COL_COVER => $this->faker->optional()->imageUrl(800, 400, 'business'),
             Challenge::COL_STATUS => $this->faker->randomElement($statuses),
-            Challenge::COL_END_DATE => $this->faker->optional()->dateTimeBetween('+7 days', '+60 days')->format('Y-m-d'),
+            Challenge::COL_END_DATE => $endDate->format('Y-m-d'),
         ];
     }
 
