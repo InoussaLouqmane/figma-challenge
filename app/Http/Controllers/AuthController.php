@@ -38,7 +38,7 @@ class AuthController extends Controller
      *
      *             @OA\Property(property="objective", type="string", example="Prendre l'argent pour aller doter ma femme"),
      *             @OA\Property(property="acquisitionChannel", type="string", example="Twitter"),
-     *             @OA\Property(property="linkToPortfolio", type="url", example="Twitter"),
+     *             @OA\Property(property="linkToPortfolio", type="url", example="https://www.google.com"),
      *             @OA\Property(property="figmaSkills", type="string", enum={"low", "medium", "high"}, example="low"),
      *             @OA\Property(property="uxSkills", type="string", enum={"low", "medium", "high"}, example="low"),
      *
