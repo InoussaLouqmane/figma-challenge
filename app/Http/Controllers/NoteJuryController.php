@@ -174,7 +174,7 @@ class NoteJuryController extends Controller
      * @OA\Get(
      *     path="/api/notes-challenger/{id}",
      *     summary="Récupérer les notes d'un challenger",
-     *     tags={"Notes par challenger"},
+     *     tags={"Notes par challenger / classement"},
      *     @OA\Parameter(name="id", in="path", description="ID du challenger", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(response=200, description="Détail de la note")
      * )
@@ -242,7 +242,7 @@ class NoteJuryController extends Controller
      * @OA\Get(
      *     path="/api/classement/",
      *     summary="Afficher le classement global",
-     *     tags={"Notes par challenger"},
+     *     tags={"Notes par challenger / classement"},
      *     @OA\Response(response=200, description="Détail de la note")
      * )
      */
