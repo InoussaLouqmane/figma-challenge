@@ -33,6 +33,8 @@ Route::prefix('auth')->group(function () {
     });
 });
 
+Route::get('/classement', [NoteJuryController::class, 'getClassement']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::apiResource('projects', ProjectController::class);
@@ -53,7 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //special notes b challenger & classement
     Route::get('/notes-challenger/{id}', [NoteJuryController::class, 'getNotesByChallenger']);
-    Route::get('/classement', [NoteJuryController::class, 'getClassement']);
+    
     Route::post('/subscribe-project', [SoumissionController::class, 'store']); //s'inscrire à un projet
 
 

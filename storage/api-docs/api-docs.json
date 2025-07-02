@@ -1251,10 +1251,20 @@
                                     },
                                     "type": {
                                         "type": "string",
+                                        "enum": [
+                                            "pdf",
+                                            "lien",
+                                            "autre"
+                                        ],
                                         "example": "pdf"
                                     },
                                     "category": {
                                         "type": "string",
+                                        "enum": [
+                                            "externe",
+                                            "video",
+                                            "autre"
+                                        ],
                                         "example": "externe"
                                     },
                                     "visible_at": {
