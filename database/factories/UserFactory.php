@@ -3,43 +3,50 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\RegistrationInfos;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends Factory<User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $roles = ['challenger', 'jury', 'admin'];
+        $statuses = ['active', 'inactive', 'banned']; // adapte selon UserStatus::cases()
+        $skills = ['low', 'medium', 'high'];
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            User::COL_NAME => $this->faker->name(),
+            User::COL_EMAIL => $this->faker->unique()->safeEmail(),
+            User::COL_PASSWORD => Hash::make('password'),
+            User::COL_ROLE => $this->faker->randomElement($roles),
+            User::COL_COUNTRY => $this->faker->country(),
+            User::COL_PHONE => $this->faker->optional()->e164PhoneNumber(),
+            User::COL_BIO => $this->faker->optional()->text(200),
+            User::COL_PHOTO => $this->faker->optional()->imageUrl(200, 200, 'people'),
+            User::COL_STATUS => 'active',
+            User::COL_EMAIL_VERIFIED_AT => now(),
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function configure(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->afterCreating(function (User $user) {
+            $skills = ['low', 'medium', 'high'];
+
+            $user->registrationInfos()->create([
+                RegistrationInfos::Objective => 'Participer et gagner le challenge',
+                RegistrationInfos::AcquisitionChannel => $this->faker->randomElement(['Twitter', 'LinkedIn', 'Bouche-à-oreille']),
+                RegistrationInfos::LinkToPortfolio => $this->faker->url(),
+                RegistrationInfos::FirstAttempt => true,
+                RegistrationInfos::isActive => true,
+                RegistrationInfos::FigmaSkills => $this->faker->randomElement($skills),
+                RegistrationInfos::UXSkills => $this->faker->randomElement($skills),
+            ]);
+        });
     }
 }

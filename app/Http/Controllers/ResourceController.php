@@ -46,8 +46,8 @@ class ResourceController extends Controller
      *             @OA\Property(property="title", type="string", example="Guide d'accessibilité"),
      *             @OA\Property(property="description", type="string", example="Ce guide explique les bonnes pratiques."),
      *             @OA\Property(property="link", type="string", example="https://example.com/resource.pdf"),
-     *             @OA\Property(property="type", type="string", example="pdf"),
-     *             @OA\Property(property="category", type="string", example="externe"),
+     *             @OA\Property(property="type", type="string", enum={"pdf","lien","autre"}, example="pdf"),
+     *             @OA\Property(property="category", type="string", enum={"externe","video","autre"}, example="externe"),
      *             @OA\Property(property="visible_at", type="string", format="date-time", example="2025-06-24T00:00:00")
      *         )
      *     ),
