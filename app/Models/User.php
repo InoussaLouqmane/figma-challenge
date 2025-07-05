@@ -36,6 +36,7 @@ class User extends Authenticatable
     public const COL_CREATED_AT        = 'created_at';
     public const COL_UPDATED_AT        = 'updated_at';
 
+    protected $appends=['isRegistered'];
     protected $fillable = [
         self::COL_NAME,
         self::COL_EMAIL,
@@ -92,6 +93,16 @@ class User extends Authenticatable
         return $this->hasMany(Resource::class, 'uploaded_by');
     }
 
+
+    public function getIsRegisteredAttribute(): bool
+    {
+        return $this->soumissions()->exists();
+    }
+
+    public function IsRegisteredToAProject(): HasMany
+    {
+        return $this->hasMany(Soumission::class, Soumission::COL_USER_ID);
+    }
     public function notifications()
     {
         return $this->belongsToMany(

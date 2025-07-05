@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId(Project::COL_CHALLENGE_ID)->constrained()->onDelete('cascade');
             $table->string(Project::COL_TITLE);
             $table->text(Project::COL_DESCRIPTION)->nullable();
+            $table->text(Project::COL_OBJECTIVE)->nullable();
             $table->string(Project::COL_COVER)->nullable();
             $table->string(Project::COL_CATEGORY);
             $table->date(Project::COL_START_DATE)->nullable();

@@ -2,13 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\UserRole;
 use App\Models\Project;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
 
 class StoreProjectRequest extends FormRequest
 {
@@ -40,6 +38,7 @@ class StoreProjectRequest extends FormRequest
                 'title' => 'required|string|max:255',
                  Project::COL_CHALLENGE_ID => 'required|integer|exists:challenges,id',
                 'description' => 'nullable|string',
+                'objective' => 'nullable|string',
                 'cover' => 'nullable|string',
                 'category' => 'required|string|max:160',
                 'start_date' => 'nullable|date',

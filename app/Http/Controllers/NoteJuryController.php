@@ -16,12 +16,12 @@ class NoteJuryController extends Controller
     /**
      * @OA\Get(
      *     path="/api/notes",
-     *     summary="Voir le classement",
+     *     summary="Les notes attribués par chacun des membres du jury",
      *     tags={"Notes Jury"},
      *     @OA\Response(response=200, description="Liste des notes")
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
         return NoteJury::with(['jury', 'soumission'])->get();
     }

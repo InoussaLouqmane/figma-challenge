@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRole;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -14,7 +15,7 @@ class UpdateChallengeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->role === (UserRole::Admin);
     }
 
     /**

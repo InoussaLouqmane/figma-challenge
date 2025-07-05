@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Enums\UserRole;
 use App\Models\User;
-use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+
 
 class UserController extends Controller
 {
@@ -26,8 +26,22 @@ class UserController extends Controller
      *     ),
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+
+        $user =  $request->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Non autorisé. Token manquant ou invalide.',
+            ], 401);
+        }
+
+
+        if($user->role === UserRole::Challenger) {
+            return response()->json([
+                'error' => "Désolé vous n'êtes pas autorisé à accéder à cette ressource",
+            ],403);
+        }
         return response()->json(User::all());
     }
 

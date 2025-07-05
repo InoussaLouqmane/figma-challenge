@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Http\Requests\StoreChallengeRequest;
 use App\Http\Requests\UpdateChallengeRequest;
 use App\Models\Challenge;
@@ -34,8 +35,22 @@ class ChallengeController extends Controller
      *
      * )
      */
-    public function index()
+    public function index(Request $request)
+
     {
+        $user =  $request->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Non autorisé. Token manquant ou invalide.',
+            ], 401);
+        }
+
+
+        if($user->role !== UserRole::Admin) {
+            return response()->json([
+                'error' => "Désolé vous n'êtes pas autorisé à accéder à cette ressource",
+            ],403);
+        }
         try {
             $challenges = Challenge::latest()->get();
             return response()->json($challenges);
@@ -200,8 +215,22 @@ class ChallengeController extends Controller
      *     @OA\Response(response=404, description="Introuvable")
      * )
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user =  $request->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Non autorisé. Token manquant ou invalide.',
+            ], 401);
+        }
+
+
+        if($user->role !== UserRole::Admin) {
+            return response()->json([
+                'error' => "Privilège insuffisant !",
+            ],403);
+        }
+
         try {
             $challenge = Challenge::findOrFail($id);
             $challenge->delete();

@@ -560,7 +560,7 @@
                 "tags": [
                     "Notes Jury"
                 ],
-                "summary": "Voir le classement",
+                "summary": "Les notes attribués par chacun des membres du jury",
                 "operationId": "625a58996d697c0651d8aa409724c1aa",
                 "responses": {
                     "200": {
@@ -751,7 +751,7 @@
         "/api/notes-challenger/{id}": {
             "get": {
                 "tags": [
-                    "Notes par challenger"
+                    "Notes par challenger / classement"
                 ],
                 "summary": "Récupérer les notes d'un challenger",
                 "operationId": "ef3e34b532f960009097578b17ee8c62",
@@ -776,7 +776,7 @@
         "/api/classement/": {
             "get": {
                 "tags": [
-                    "Notes par challenger"
+                    "Notes par challenger / classement"
                 ],
                 "summary": "Afficher le classement global",
                 "operationId": "986a01e81e62185dbf63e56e418af855",
@@ -1012,7 +1012,7 @@
                 "tags": [
                     "Projects"
                 ],
-                "summary": "Lister tous les projets",
+                "summary": "Lister tous les projets et les participants",
                 "operationId": "8d4a13ef3fc773ff4031e515460919ea",
                 "responses": {
                     "200": {
@@ -1063,6 +1063,10 @@
                                     "description": {
                                         "type": "string",
                                         "example": "Créer une expérience fluide pour les utilisateurs"
+                                    },
+                                    "objective": {
+                                        "type": "string",
+                                        "example": "L objectif est de former des guerriers"
                                     },
                                     "cover": {
                                         "type": "string",
@@ -1996,8 +2000,7 @@
                 "required": [
                     "name",
                     "email",
-                    "password",
-                    "country"
+                    "password"
                 ],
                 "properties": {
                     "name": {
@@ -2016,7 +2019,8 @@
                     },
                     "country": {
                         "type": "string",
-                        "example": "Bénin"
+                        "example": "Bénin",
+                        "nullable": true
                     },
                     "phone": {
                         "type": "string",
@@ -2086,8 +2090,8 @@
             "description": "Notes Jury"
         },
         {
-            "name": "Notes par challenger",
-            "description": "Notes par challenger"
+            "name": "Notes par challenger / classement",
+            "description": "Notes par challenger / classement"
         },
         {
             "name": "Partners",

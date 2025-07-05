@@ -24,8 +24,10 @@ class Project extends Model
     public const COL_START_DATE = 'start_date';
     public const COL_DEADLINE = 'deadline';
     public const COL_STATUS = 'status';
+    public const COL_OBJECTIVE = 'objective';
     public const COL_CREATED_AT = 'created_at';
     public const COL_UPDATED_AT = 'updated_at';
+
 
     protected $fillable = [
         self::COL_CHALLENGE_ID,
@@ -35,6 +37,7 @@ class Project extends Model
         self::COL_CATEGORY,
         self::COL_START_DATE,
         self::COL_DEADLINE,
+        self::COL_OBJECTIVE,
         self::COL_STATUS,
     ];
 

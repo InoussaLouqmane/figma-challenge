@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Models\ContactMessage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -18,8 +19,21 @@ class ContactMessageController extends Controller
      *     @OA\Response(response=200, description="Liste des messages")
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user =  $request->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Non autorisé. Token manquant ou invalide.',
+            ], 401);
+        }
+
+
+        if($user->role !== UserRole::Admin) {
+            return response()->json([
+                'error' => "Privilège insuffisant !",
+            ],403);
+        }
         try {
             $contactMessages = ContactMessage::all();
             if($contactMessages->isEmpty()){
@@ -57,6 +71,7 @@ class ContactMessageController extends Controller
      */
     public function store(StoreContactMessageRequest $request)
     {
+
         $message = ContactMessage::create($request->validated());
         return response()->json(['message' => 'Message reçu', 'data' => $message], 201);
     }
@@ -72,8 +87,22 @@ class ContactMessageController extends Controller
      *     @OA\Response(response=404, description="Message non trouvé")
      * )
      */
-    public function show($id)
+    public function show(Request $request,$id)
     {
+        $user =  $request->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Non autorisé. Token manquant ou invalide.',
+            ], 401);
+        }
+
+
+        if($user->role !== UserRole::Admin) {
+            return response()->json([
+                'error' => "Privilège insuffisant !",
+            ],403);
+        }
+
         try {
             return ContactMessage::findOrFail($id);
         }catch(ModelNotFoundException $exception){
@@ -95,8 +124,22 @@ class ContactMessageController extends Controller
      *     @OA\Response(response=200, description="Message supprimé")
      * )
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user =  $request->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Non autorisé. Token manquant ou invalide.',
+            ], 401);
+        }
+
+
+        if($user->role !== UserRole::Admin) {
+            return response()->json([
+                'error' => "Privilège insuffisant !",
+            ],403);
+        }
+
         try {
             $contactMessage = ContactMessage::findOrFail($id);
             $contactMessage->delete();

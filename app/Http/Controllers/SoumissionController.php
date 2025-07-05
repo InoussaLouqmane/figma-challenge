@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\SoumissionStatus;
+use App\Enums\UserRole;
 use App\Models\Project;
 use App\Models\Soumission;
+use http\Client\Curl\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreSoumissionRequest;
@@ -71,11 +73,20 @@ class SoumissionController extends Controller
     public function store(StoreSoumissionRequest $request)
     {
         $userId = $request->input('user_id');
+
+        $user = \App\Models\User::findOrFail($userId);
+
+        if($user->role !== UserRole::Challenger)
+        {
+            return response()->json([
+                'error' => 'Seul un challenger peut s\'inscrire.'
+            ], 403);
+        }
+
         $projectId = $request->input('project_id');
         $challengeId = $request->input('challenge_id');
 
         $exists = Soumission::where('user_id', $userId)
-            ->where('project_id', $projectId)
             ->where('challenge_id', $challengeId)
             ->exists();
 

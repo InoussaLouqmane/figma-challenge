@@ -15,7 +15,7 @@ class ProjectController extends Controller
     /**
      * @OA\Get(
      *     path="/api/projects",
-     *     summary="Lister tous les projets",
+     *     summary="Lister tous les projets et les participants",
      *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     tags={"Projects"},
      *     @OA\Response(response=200, description="Liste des projets")
@@ -23,7 +23,27 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return Project::all();
+
+        $projects = Project::with(['soumissions.user'])->get();
+
+        $result = $projects->map(function ($project) {
+            return [
+                'project_id' => $project->id,
+                'project_title' => $project->title,
+                'participants' => $project->soumissions->map(function ($s) {
+                    return [
+
+                            'id' => $s->user->id,
+                            'name' => $s->user->name,
+                            'email' => $s->user->email,
+                            'figma_link' => $s->figma_link ?? null,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json(['data' => $result]);
+
     }
 
     /**
@@ -40,6 +60,7 @@ class ProjectController extends Controller
      *             @OA\Property(property="challenge_id", type="integer", example=1),
      *             @OA\Property(property="status", type="string", enum={"active", "closed"}, example="active"),
      *             @OA\Property(property="description", type="string", example="Créer une expérience fluide pour les utilisateurs"),
+     *             @OA\Property(property="objective", type="string", example="L objectif est de former des guerriers"),
      *             @OA\Property(property="cover", type="string", example="project.png"),
      *             @OA\Property(property="category", type="string", example="transport"),
      *             @OA\Property(property="start_date", type="string", format="date", example="2025-06-10"),

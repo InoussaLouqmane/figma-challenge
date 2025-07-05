@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -60,6 +61,17 @@ return Application::configure(basePath: dirname(__DIR__))
                 ],
                 404
             );
+        });
+
+        $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
+            if (str_contains($e->getMessage(), 'unauthorized')) {
+                return response()->json(
+                    [
+                        'message' => "Privilège insuffisant !"
+                    ],
+                    401
+                );
+            }
         });
 
 
