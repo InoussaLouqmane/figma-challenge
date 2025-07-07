@@ -28,8 +28,17 @@ class ProjectController extends Controller
 
         $result = $projects->map(function ($project) {
             return [
-                'project_id' => $project->id,
-                'project_title' => $project->title,
+                'id' => $project->id,
+                'title' => $project->title,
+                'description' => $project->description,
+                'objective' => $project->objective,
+                'cover' => $project->cover,
+                'category' => $project->category,
+                'start_date' => $project->start_date,
+                'deadline' => $project->deadline,
+                'status' => $project->status,
+                'created_at' => $project->created_at,
+                'updated_at' => $project->updated_at,
                 'participants' => $project->soumissions->map(function ($s) {
                     return [
 
@@ -42,7 +51,7 @@ class ProjectController extends Controller
             ];
         });
 
-        return response()->json(['data' => $result]);
+        return response()->json($result);
 
     }
 
