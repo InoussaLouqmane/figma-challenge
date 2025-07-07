@@ -51,7 +51,7 @@ class ProjectController extends Controller
             ];
         });
 
-        return response()->json($result);
+        return response()->json(["data" => $result]);
 
     }
 
