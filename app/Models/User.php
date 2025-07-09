@@ -29,14 +29,16 @@ class User extends Authenticatable
     public const COL_COUNTRY           = 'country';
     public const COL_PHONE             = 'phone';
     public const COL_BIO               = 'bio';
-    public const COL_PHOTO             = 'photo';
+    public const COL_PHOTO_ID             = 'photo_id';
+    public const COL_PHOTO_URL = 'photo_url';
+
     public const COL_STATUS            = 'status';
     public const COL_EMAIL_VERIFIED_AT= 'email_verified_at';
     public const COL_REMEMBER_TOKEN    = 'remember_token';
     public const COL_CREATED_AT        = 'created_at';
     public const COL_UPDATED_AT        = 'updated_at';
 
-    protected $appends=['isRegistered'];
+    protected $appends=['isRegistered', 'registeredProjects'];
     protected $fillable = [
         self::COL_NAME,
         self::COL_EMAIL,
@@ -45,8 +47,10 @@ class User extends Authenticatable
         self::COL_COUNTRY,
         self::COL_PHONE,
         self::COL_BIO,
-        self::COL_PHOTO,
+        self::COL_PHOTO_ID,
         self::COL_STATUS,
+        self::COL_PHOTO_URL,
+        self::COL_STATUS
     ];
 
     protected $casts = [
@@ -133,5 +137,20 @@ class User extends Authenticatable
 
     public function registrationInfos(){
         return $this->hasOne(RegistrationInfos::class, RegistrationInfos::USER_ID, User::COL_ID);
+    }
+
+    public function getRegisteredProjectsAttribute()
+    {
+        return $this->soumissions()
+            ->with('project') // charge les détails du projet
+            ->get()
+            ->map(function ($soumission) {
+                return [
+                    'project' => $soumission->project, // relation project à ajouter ci-dessous
+                    'figma_link' => $soumission->figma_link,
+                    'soumission_date' => $soumission->soumission_date,
+                    'status' => $soumission->status,
+                ];
+            });
     }
 }
