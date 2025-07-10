@@ -53,7 +53,7 @@ class NoteJuryController extends Controller
         $user = User::findOrFail($request[NoteJury::COL_USER_ID]);
 
         //vérifier si c'est bien un jury, sinon délivrer un message explicite
-        if($user->role == UserRole::Jury) {
+        if($user->role == UserRole::Jury || $user->role == UserRole::Admin) {
             // vérifier si la requête n'existe déjà pas, pour éviter de duplicate conflict
             $exist = NoteJury::where(NoteJury::COL_USER_ID, $request[NoteJury::COL_USER_ID])
                 ->where(NoteJury::COL_SOUMISSION_ID, $request[NoteJury::COL_SOUMISSION_ID])
@@ -68,7 +68,7 @@ class NoteJuryController extends Controller
             return response()->json(['message' => 'Note enregistrée', 'data' => $note], 201);
         }else{
             return response()->json([
-                'message' => "Désolé, vous devez être un membre du jury, pour effectuer cette action"
+                'message' => "Désolé, vous devez être un membre du jury ou un admin, pour effectuer cette action"
             ], 403);
         }
 
@@ -143,7 +143,7 @@ class NoteJuryController extends Controller
         $user = User::findOrFail($request[NoteJury::COL_USER_ID]);
 
 
-        if(($user->role != UserRole::Jury))
+        if(($user->role != UserRole::Jury) && ($user->role != UserRole::Admin))
         {
             return response()->json([
                 'message' => "Désolé, vous devez être un membre du jury, pour effectuer cette action"
