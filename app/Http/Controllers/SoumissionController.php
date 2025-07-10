@@ -70,7 +70,7 @@ class SoumissionController extends Controller
      *     @OA\Response(response=409, description="Déjà inscrit à un projet")
      * )
      */
-    public function store(StoreSoumissionRequest $request)
+    public function storeSubscribe(StoreSoumissionRequest $request)
     {
         $userId = $request->input('user_id');
 
@@ -131,7 +131,7 @@ class SoumissionController extends Controller
     /**
      * @OA\Put(
      *     path="/api/submissions/{id}",
-     *     summary="Faire / modifier une soumission",
+     *     summary="Modifier une soumission",
      *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     tags={"Submissions"},
      *     @OA\RequestBody(
@@ -156,6 +156,57 @@ class SoumissionController extends Controller
             'message' => 'Soumission faite avec succes',
             'data' => $soumission]);
     }
+
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/submissions/{id}",
+     *     summary="Faire une soumission",
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
+     *     tags={"Submissions"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateSoumissionRequest")
+     *     ),
+     *     @OA\Response(response=200, description="Soumission faite avec succes")
+     * )
+     */
+    public function storeSoumission(UpdateSoumissionRequest $request)
+    {
+        try {
+            $soumission = Soumission::where(Soumission::COL_USER_ID, $request['user_id'])
+                ->latest()
+                ->first();
+
+            if (!$soumission) {
+                return response()->json([
+                    'message' => "Vous n'êtes inscrit à aucun projet."
+                ], 404);
+            }
+
+            $data = $request->validated();
+
+            if (!empty($data['figma_link'])) {
+                $data['status'] = SoumissionStatus::Soumis->value;
+                $data[Soumission::COL_SOUMISSION_DATE] = now();
+            }
+
+            $soumission->update($data);
+
+            return response()->json([
+                'message' => 'Soumission faite avec succès',
+                'data' => $soumission
+            ]);
+
+        } catch (\Exception $exception) {
+            return response()->json([
+                'message' => 'Erreur lors de la soumission',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
 
     /*
      * @OA\Delete(
