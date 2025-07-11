@@ -34,6 +34,9 @@ class SoumissionController extends Controller
                 return null;
             }
 
+            $totalGraphisme = $latestSub->notes->sum('graphisme');
+            $totalAnimation = $latestSub->notes->sum('animation');
+            $totalNavigation = $latestSub->notes->sum('navigation');
             return [
                 'project_id' => $project->id,
                 'project_title' => $project->title,
@@ -46,6 +49,12 @@ class SoumissionController extends Controller
                 'submission_status' => $latestSub->status,
                 'submission_comment' => $latestSub->commentaire,
                 'figma_link' => $latestSub->figma_link,
+                'notes' => [
+                    'graphisme' => $totalGraphisme ?? null,
+                    'animation' => $totalAnimation ?? null,
+                    'navigation' => $totalNavigation ?? null,
+                ]
+
             ];
         })->filter()->values();
 
