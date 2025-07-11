@@ -42,6 +42,7 @@ class SoumissionController extends Controller
                 'project_title' => $project->title,
                 'project_cover' => $project->cover,
                 'project_deadline' => $project->deadline,
+                'canEdit'=> now()->lessThan($project->deadline),
                 'challenger_id' => $latestSub->user->id,
                 'challenger_name' => $latestSub->user->name,
                 'submission_id' => $latestSub->id,
@@ -49,6 +50,7 @@ class SoumissionController extends Controller
                 'submission_status' => $latestSub->status,
                 'submission_comment' => $latestSub->commentaire,
                 'figma_link' => $latestSub->figma_link,
+
                 'notes' => [
                     'graphisme' => $totalGraphisme ?? null,
                     'animation' => $totalAnimation ?? null,
