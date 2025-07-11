@@ -28,27 +28,30 @@ class SoumissionController extends Controller
         $projects = Project::with(['soumissions.user'])->get();
 
         $result = $projects->map(function ($project) {
+            $latestSub = $project->soumissions->first();
+            if(!$latestSub || !$latestSub->figma_link)
+            {
+                return null;
+            }
+
             return [
                 'project_id' => $project->id,
                 'project_title' => $project->title,
-                'inscriptions' => $project->soumissions->map(function ($s) {
-                    return [
-                        'user_info' => [
-                            'id' => $s->user->id,
-                            'name' => $s->user->name,
-                            'email' => $s->user->email,
-                        ],
-                        'submission_info' => [
-                            'inscription_date' => $s->created_at->format('Y-m-d H:i'),
-                            'soumission_date' => optional($s->soumission_date)->format('Y-m-d H:i'),
-                            'figma_link' => $s->figma_link ?? '',
-                        ],
-                    ];
-                }),
+                'project_cover' => $project->cover,
+                'project_deadline' => $project->deadline,
+                'challenger_id' => $latestSub->user->id,
+                'challenger_name' => $latestSub->user->name,
+                'submission_id' => $latestSub->id,
+                'submission_date' => $latestSub->soumission_date->format('Y-m-d H:i'),
+                'submission_status' => $latestSub->status,
+                'submission_comment' => $latestSub->commentaire,
+                'figma_link' => $latestSub->figma_link,
             ];
-        });
+        })->filter()->values();
 
-        return response()->json(['data' => $result]);
+        return response()->json([
+            'data' => $result
+        ]);
     }
 
 
