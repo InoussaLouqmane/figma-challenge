@@ -175,7 +175,7 @@ class SoumissionController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/submissions/{id}",
+     *     path="/api/submissions",
      *     summary="Faire une soumission",
      *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     tags={"Submissions"},
