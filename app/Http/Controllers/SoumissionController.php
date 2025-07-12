@@ -148,6 +148,13 @@ class SoumissionController extends Controller
      *     summary="Modifier une soumission",
      *     security={{"sanctum": {}}, "bearerAuth":{}},
      *     tags={"Submissions"},
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *          description="ID de la soumission à modifier",
+     *          @OA\Schema(type="integer")
+     *      ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/UpdateSoumissionRequest")
@@ -157,8 +164,8 @@ class SoumissionController extends Controller
      */
     public function update(UpdateSoumissionRequest $request, $id)
     {
-        $soumission = Soumission::where(Soumission::COL_USER_ID,$id)
-        ->latest()->first();
+        $soumission = Soumission::where(Soumission::COL_ID,$id)
+            ->latest()->first();
 
         if($request['figma_link']){
             $request['status'] = SoumissionStatus::Soumis->value;
@@ -167,7 +174,7 @@ class SoumissionController extends Controller
         $soumission->update($request->validated());
 
         return response()->json([
-            'message' => 'Soumission faite avec succes',
+            'message' => 'Soumission modifiée avec succes',
             'data' => $soumission]);
     }
 

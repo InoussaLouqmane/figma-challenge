@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRole;
 use App\Models\Challenge;
 use App\Models\Soumission;
 use Illuminate\Contracts\Validation\Validator;
@@ -27,7 +28,7 @@ class UpdateSoumissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            Soumission::COL_USER_ID => 'required|exists:users,id',
+            Soumission::COL_USER_ID => 'sometimes|exists:users,id',
             Soumission::COL_FIGMA_LINK => 'required|url',
             Soumission::COL_COMMENTAIRE => 'sometimes|string',
         ];

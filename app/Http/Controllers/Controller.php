@@ -57,8 +57,7 @@ namespace App\Http\Controllers;
  *
  *  @OA\Schema(
  *      schema="UpdateSoumissionRequest",
- *      required={"user_id", "figma_link"},
- *      @OA\Property(property="user_id", type="integer", example=1),
+ *      required={"figma_link"},
  *      @OA\Property(property="figma_link", type="string", example="https://figma.com/file/abc123"),
  *      @OA\Property(property="commentaire", type="string", example="Soumission initiale")
  *  )
