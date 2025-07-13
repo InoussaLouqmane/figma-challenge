@@ -131,7 +131,7 @@ class SoumissionController extends Controller
      */
     public function show($id)
     {
-            $soumission = Soumission::where('user_id', $id)
+            $soumission = Soumission::where('id', $id)
             ->latest()->first();
 
             if(!$soumission) {
