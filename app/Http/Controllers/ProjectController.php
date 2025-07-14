@@ -69,7 +69,6 @@ class ProjectController extends Controller
      *                 @OA\Schema(
      *                    required={"title", "category", "deadline", "objective", "description"},
      *              @OA\Property(property="title", type="string", example="Repenser la plateforme YANGO"),
-     *              @OA\Property(property="status", type="string", enum={"active", "closed"}, example="active"),
      *              @OA\Property(property="description", type="string", example="Créer une expérience fluide pour les utilisateurs"),
      *              @OA\Property(property="objective", type="string", example="L objectif est de former des guerriers"),
      *              @OA\Property(property="cover", type="file", format="binary", description="Image à uploader"),
