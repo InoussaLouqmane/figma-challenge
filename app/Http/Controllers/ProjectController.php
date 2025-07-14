@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use Cloudinary\Cloudinary;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\StoreProjectRequest;
@@ -32,7 +33,7 @@ class ProjectController extends Controller
                 'title' => $project->title,
                 'description' => $project->description,
                 'objective' => $project->objective,
-                'cover' => $project->cover,
+                'cover_url' => $project->cover_url,
                 'category' => $project->category,
                 'start_date' => $project->start_date,
                 'deadline' => $project->deadline,
@@ -63,17 +64,22 @@ class ProjectController extends Controller
      *     tags={"Projects"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"title", "category", "challenge_id", "deadline"},
-     *             @OA\Property(property="title", type="string", example="Repenser la plateforme YANGO"),
-     *             @OA\Property(property="challenge_id", type="integer", example=1),
-     *             @OA\Property(property="status", type="string", enum={"active", "closed"}, example="active"),
-     *             @OA\Property(property="description", type="string", example="Créer une expérience fluide pour les utilisateurs"),
-     *             @OA\Property(property="objective", type="string", example="L objectif est de former des guerriers"),
-     *             @OA\Property(property="cover", type="string", example="project.png"),
-     *             @OA\Property(property="category", type="string", example="transport"),
-     *             @OA\Property(property="start_date", type="string", format="date", example="2025-06-10"),
-     *             @OA\Property(property="deadline", type="string", format="date", example="2025-06-20")
+     *         @OA\MediaType (
+     *              mediaType="multipart/form-data",
+     *                 @OA\Schema(
+     *                    required={"title", "category", "challenge_id", "deadline", "objective", "description"},
+     *              @OA\Property(property="title", type="string", example="Repenser la plateforme YANGO"),
+     *              @OA\Property(property="challenge_id", type="integer", example=1),
+     *              @OA\Property(property="status", type="string", enum={"active", "closed"}, example="active"),
+     *              @OA\Property(property="description", type="string", example="Créer une expérience fluide pour les utilisateurs"),
+     *              @OA\Property(property="objective", type="string", example="L objectif est de former des guerriers"),
+     *              @OA\Property(property="cover", type="file", format="binary", description="Image à uploader"),
+     *              @OA\Property(property="category", type="string", example="transport"),
+     *              @OA\Property(property="start_date", type="string", format="date", example="2025-06-10"),
+     *              @OA\Property(property="deadline", type="string", format="date", example="2025-06-20")
+     *                 )
+     *
+     *
      *         )
      *     ),
      *     @OA\Response(response=201, description="Projet créé"),
@@ -82,16 +88,30 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request): JsonResponse
     {
+        $cloudinary = new Cloudinary([
+            'cloud' => [
+                'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                'api_key'  => env('CLOUDINARY_API_KEY'),
+                'api_secret' => env('CLOUDINARY_API_SECRET'),
+                'url' => [
+                    'secure' => true]]]);
 
-            $project = Project::create($request->validated());
+        $data = $request->validated();
 
-            return response()->json([
-                'message' => 'Projet créé',
-                'data' => $project
+        // Gestion du cover image
+        if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
+            $resp = $cloudinary->uploadApi()->upload($request->file('cover')->getRealPath());
 
-            ], 201);
+            $data['cover_url'] = $resp['secure_url'];
+            $data['cover_id'] = $resp['public_id'];
+        }
 
+        $project = Project::create($data);
 
+        return response()->json([
+            'message' => 'Projet créé',
+            'data' => $project
+        ], 201);
     }
 
     /**
@@ -118,7 +138,7 @@ class ProjectController extends Controller
     }
 
     /**
-     * @OA\Put(
+     * @OA\Post(
      *     path="/api/projects/{id}",
      *     summary="Mettre à jour un projet",
      *     security={{"sanctum": {}}, "bearerAuth":{}},
@@ -126,24 +146,64 @@ class ProjectController extends Controller
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/StoreProjectRequest")
+     *         @OA\MediaType (
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={},
+     *                 @OA\Property(property="title", type="string", example="Repenser la plateforme YANGO"),
+     *                 @OA\Property(property="challenge_id", type="integer", example=1),
+     *                 @OA\Property(property="status", type="string", enum={"active", "closed"}, example="active"),
+     *                 @OA\Property(property="description", type="string", example="Créer une expérience fluide pour les utilisateurs"),
+     *                 @OA\Property(property="objective", type="string", example="L objectif est de former des guerriers"),
+     *                 @OA\Property(property="cover", type="file", format="binary", description="Image à uploader"),
+     *                 @OA\Property(property="category", type="string", example="transport"),
+     *                 @OA\Property(property="start_date", type="string", format="date", example="2025-06-10"),
+     *                 @OA\Property(property="deadline", type="string", format="date", example="2025-06-20")
+     *             )
+     *         )
      *     ),
      *     @OA\Response(response=200, description="Projet mis à jour"),
      *     @OA\Response(response=404, description="Le projet que vous recherchez n\'existe pas")
      * )
      */
+
     public function update(UpdateProjectRequest $request, $id): JsonResponse
     {
         try {
+
+            $cloudinary = new Cloudinary([
+                'cloud' => [
+                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                    'api_key'  => env('CLOUDINARY_API_KEY'),
+                    'api_secret' => env('CLOUDINARY_API_SECRET'),
+                    'url' => [
+                        'secure' => true]]]);
+
             $project = Project::findOrFail($id);
-            $project->update($request->validated());
-            return response()->json(['message' => 'Projet mis à jour', 'data' => $project]);
-        }catch (ModelNotFoundException $exception){
+            $data = $request->validated();
+
+
+            if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
+                if ($project->cover_id) {
+                    $cloudinary->uploadApi()->destroy($project->cover_id);
+                }
+
+                $resp = $cloudinary->uploadApi()->upload($request->file('cover')->getRealPath());
+                $data['cover_url'] = $resp['secure_url'];
+                $data['cover_id'] = $resp['public_id'];
+            }
+
+            $project->update($data);
+
+            return response()->json([
+                'message' => 'Projet mis à jour',
+                'data' => $project
+            ]);
+        } catch (ModelNotFoundException $exception) {
             return response()->json([
                 'message' => 'Le projet que vous recherchez n\'existe pas',
             ], 404);
         }
-
     }
 
     /**
@@ -158,8 +218,21 @@ class ProjectController extends Controller
      */
     public function destroy($id): JsonResponse
     {
+
         try {
             $project = Project::findOrFail($id);
+
+            if($project->cover_id){
+                $cloudinary = new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                        'api_key'  => env('CLOUDINARY_API_KEY'),
+                        'api_secret' => env('CLOUDINARY_API_SECRET'),
+                        'url' => [
+                            'secure' => true]]]);
+
+                $resp = $cloudinary->uploadApi()->destroy($project->cover_id);
+            }
             $project->delete();
 
             return response()->json(['message' => 'Projet supprimé']);

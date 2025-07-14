@@ -37,9 +37,9 @@ class StoreProjectRequest extends FormRequest
         return [
                 'title' => 'required|string|max:255',
                  Project::COL_CHALLENGE_ID => 'required|integer|exists:challenges,id',
-                'description' => 'nullable|string',
-                'objective' => 'nullable|string',
-                'cover' => 'nullable|string',
+                'description' => 'required|string',
+                'objective' => 'required|string',
+                'cover' => 'sometimes|image|max:2048',
                 'category' => 'required|string|max:160',
                 'start_date' => 'nullable|date',
                 'deadline' => 'required|date|after:today',

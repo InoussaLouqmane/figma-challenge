@@ -29,7 +29,7 @@ class UpdateProjectRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'cover' => 'nullable|string',
+            'cover' => 'sometimes|image|max:2048',
             'category' => 'sometimes|string|max:120',
             'start_date' => 'nullable|date',
             'deadline' => 'nullable|date|after:today', // Si présent, la date doit être dans le futur

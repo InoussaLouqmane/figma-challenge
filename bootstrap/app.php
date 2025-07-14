@@ -18,13 +18,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
 
         $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
 
-            if ($request->is('api/*')) {
+           if ($request->is('api/*')) {
                 return true; // Always render JSON for 'api/*' routes
             }
             return $request->expectsJson();

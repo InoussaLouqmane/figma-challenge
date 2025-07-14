@@ -20,7 +20,6 @@ class ProjectFactory extends Factory
         return [
             Project::COL_TITLE => $this->faker->sentence(3),
             Project::COL_DESCRIPTION => $this->faker->paragraph(),
-            Project::COL_COVER => $this->faker->optional()->imageUrl(600, 300, 'tech'),
             Project::COL_CATEGORY => $this->faker->randomElement($categories),
             Project::COL_START_DATE => $start->format('Y-m-d'),
             Project::COL_DEADLINE => $deadline ? $deadline->format('Y-m-d') :null,

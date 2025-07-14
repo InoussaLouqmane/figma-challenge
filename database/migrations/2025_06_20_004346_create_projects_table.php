@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string(Project::COL_TITLE);
             $table->text(Project::COL_DESCRIPTION)->nullable();
             $table->text(Project::COL_OBJECTIVE)->nullable();
-            $table->string(Project::COL_COVER)->nullable();
+            $table->string(Project::COL_COVER_URL)->nullable();
+            $table->string(Project::COL_COVER_ID)->nullable();
             $table->string(Project::COL_CATEGORY);
             $table->date(Project::COL_START_DATE)->nullable();
             $table->date(Project::COL_DEADLINE);

@@ -16,15 +16,19 @@ namespace App\Http\Controllers;
  *
  * @OA\Schema(
  *     schema="StoreProjectRequest",
- *     required={"title", "category", "challenge_id", "deadline"},
- *     @OA\Property(property="title", type="string", example="Projet Mobilité"),
- *     @OA\Property(property="description", type="string", example="Une plateforme pour organiser le transport urbain"),
- *     @OA\Property(property="category", type="string", example="transport"),
- *     @OA\Property(property="cover", type="string", example="project-cover.png"),
+ *     required={"title", "category", "challenge_id", "deadline", "objective", "description"},
+ *     @OA\Property(property="title", type="string", example="Repenser la plateforme YANGO"),
  *     @OA\Property(property="challenge_id", type="integer", example=1),
- *     @OA\Property(property="start_date", type="string", format="date", example="2025-07-01"),
- *     @OA\Property(property="deadline", type="string", format="date", example="2025-07-31")
+ *     @OA\Property(property="status", type="string", enum={"active", "closed"}, example="active"),
+ *     @OA\Property(property="description", type="string", example="Créer une expérience fluide pour les utilisateurs"),
+ *     @OA\Property(property="objective", type="string", example="L objectif est de former des guerriers"),
+ *     @OA\Property(property="cover", type="file", format="binary", description="Image à uploader"),
+ *     @OA\Property(property="category", type="string", example="transport"),
+ *     @OA\Property(property="start_date", type="string", format="date", example="2025-06-10"),
+ *     @OA\Property(property="deadline", type="string", format="date", example="2025-06-20")
  * )
+ *
+ *
  *
  * @OA\Schema(
  *     schema="StoreResourceRequest",

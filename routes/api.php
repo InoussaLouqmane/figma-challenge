@@ -39,7 +39,7 @@ Route::get('/classement', [NoteJuryController::class, 'getClassement']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::apiResource('projects', ProjectController::class);
+
     Route::apiResource('challenges', ChallengeController::class);
     Route::apiResource('partners', PartnerController::class);
 
@@ -51,6 +51,14 @@ Route::middleware('auth:sanctum')->group(function () {
     /**
      * Special routes
      */
+
+    //projects
+    Route::get('/projects', [ProjectController::class, 'index']);
+    Route::post('/projects', [ProjectController::class, 'store']);
+    Route::get('/projects/{project}', [ProjectController::class, 'show']);
+    Route::post('/projects/{project}', [ProjectController::class, 'update']);
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
+
     //site-settings
     Route::get('/site-settings', [SiteSettingController::class, 'index']);
     Route::put('/site-settings', [SiteSettingController::class, 'update']);

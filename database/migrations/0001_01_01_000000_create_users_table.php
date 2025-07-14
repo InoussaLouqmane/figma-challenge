@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string(User::COL_COUNTRY)->nullable();
             $table->string(User::COL_PHONE)->nullable();
             $table->text(User::COL_BIO)->nullable();
-            $table->string(User::COL_PHOTO)->nullable();
+            $table->string(User::COL_PHOTO_ID)->nullable();
+            $table->string(User::COL_PHOTO_URL)->nullable();
             $table->enum(User::COL_STATUS, array_column(UserStatus::cases(), 'value'))->default(UserStatus::Active->value);
             $table->timestamp(User::COL_EMAIL_VERIFIED_AT)->nullable();
             $table->rememberToken();

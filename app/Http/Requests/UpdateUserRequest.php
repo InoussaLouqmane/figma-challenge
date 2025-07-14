@@ -20,18 +20,19 @@ class UpdateUserRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
             'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $this->route('id'),
+            'email' => 'nullable|string',
             'phone' => 'nullable|string',
             'bio' => 'nullable|string',
-            'country' => 'sometimes|string|max:100',
+            'image' => 'sometimes|image|max:2048',
+            'country' => 'nullable|string|max:100',
             'password' => 'nullable|string|min:6',
-            'role' => 'sometimes|string:in:admin,jury,challenger',
+            'role' => 'sometimes|string|in:admin,jury,challenger',
         ];
     }
 

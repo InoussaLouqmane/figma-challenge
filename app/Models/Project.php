@@ -19,7 +19,8 @@ class Project extends Model
     public const COL_CHALLENGE_ID = 'challenge_id';
     public const COL_TITLE = 'title';
     public const COL_DESCRIPTION = 'description';
-    public const COL_COVER = 'cover';
+    public const COL_COVER_URL = 'cover_url';
+    public const COL_COVER_ID = 'cover_id';
     public const COL_CATEGORY = 'category';
     public const COL_START_DATE = 'start_date';
     public const COL_DEADLINE = 'deadline';
@@ -33,7 +34,8 @@ class Project extends Model
         self::COL_CHALLENGE_ID,
         self::COL_TITLE,
         self::COL_DESCRIPTION,
-        self::COL_COVER,
+        self::COL_COVER_URL,
+        self::COL_COVER_ID,
         self::COL_CATEGORY,
         self::COL_START_DATE,
         self::COL_DEADLINE,
@@ -44,7 +46,7 @@ class Project extends Model
     protected $casts = [
         self::COL_STATUS => ProjectStatus::class,
         self::COL_START_DATE => 'date',
-        self::COL_DEADLINE => 'date',
+        self::COL_DEADLINE => 'datetime',
     ];
 
     public function challenge(): \Illuminate\Database\Eloquent\Relations\BelongsTo

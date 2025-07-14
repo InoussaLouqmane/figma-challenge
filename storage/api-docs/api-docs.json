@@ -1007,6 +1007,61 @@
                 }
             }
         },
+        "/api/permissions/{id}": {
+            "post": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Gérer les permissions",
+                "operationId": "9c28e90669f7617d3b0071790d91642d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'utilisateur dont on souhaite changer le rôle",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "role"
+                                ],
+                                "properties": {
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "jury",
+                                            "admin",
+                                            "challenger"
+                                        ],
+                                        "example": "challenger"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Soumission faite avec succes"
+                    }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
+                }
+            }
+        },
         "/api/projects": {
             "get": {
                 "tags": [
@@ -1035,13 +1090,15 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "title",
                                     "category",
                                     "challenge_id",
-                                    "deadline"
+                                    "deadline",
+                                    "objective",
+                                    "description"
                                 ],
                                 "properties": {
                                     "title": {
@@ -1069,8 +1126,9 @@
                                         "example": "L objectif est de former des guerriers"
                                     },
                                     "cover": {
-                                        "type": "string",
-                                        "example": "project.png"
+                                        "description": "Image à uploader",
+                                        "type": "file",
+                                        "format": "binary"
                                     },
                                     "category": {
                                         "type": "string",
@@ -1137,12 +1195,12 @@
                     "bearerAuth": {}
                 }
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Projects"
                 ],
                 "summary": "Mettre à jour un projet",
-                "operationId": "491d11cc6efd20335421a859159e2487",
+                "operationId": "26a8736d8224d155f7c4449b994dd52b",
                 "parameters": [
                     {
                         "name": "id",
@@ -1156,9 +1214,55 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/StoreProjectRequest"
+                                "required": [],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Repenser la plateforme YANGO"
+                                    },
+                                    "challenge_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "closed"
+                                        ],
+                                        "example": "active"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Créer une expérience fluide pour les utilisateurs"
+                                    },
+                                    "objective": {
+                                        "type": "string",
+                                        "example": "L objectif est de former des guerriers"
+                                    },
+                                    "cover": {
+                                        "description": "Image à uploader",
+                                        "type": "file",
+                                        "format": "binary"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "transport"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-10"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-20"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     }
@@ -1482,6 +1586,34 @@
                     },
                     "bearerAuth": {}
                 }
+            },
+            "post": {
+                "tags": [
+                    "Submissions"
+                ],
+                "summary": "Faire une soumission",
+                "operationId": "7cd2d44e00879849fb39c55caf9069a9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSoumissionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Soumission faite avec succes"
+                    }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
+                }
             }
         },
         "/api/subscribe-project": {
@@ -1490,7 +1622,7 @@
                     "Projects"
                 ],
                 "summary": "S'inscrire à un projet",
-                "operationId": "2d70fd146b8011de37794a29c136519d",
+                "operationId": "ad43f448276a7d4c2dd185de9246fa09",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1564,8 +1696,19 @@
                 "tags": [
                     "Submissions"
                 ],
-                "summary": "Faire / modifier une soumission",
+                "summary": "Modifier une soumission",
                 "operationId": "b347c3d56fc64418b647000b821408c3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la soumission à modifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1649,12 +1792,12 @@
                     "bearerAuth": {}
                 }
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Mettre à jour un utilisateur",
-                "operationId": "b9091397c8b25f12c6adb74be6ce3a5a",
+                "operationId": "5dffc13650a9258709dafdf024abddb4",
                 "parameters": [
                     {
                         "name": "id",
@@ -1669,14 +1812,9 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "role",
-                                    "country"
-                                ],
+                                "required": [],
                                 "properties": {
                                     "name": {
                                         "type": "string",
@@ -1704,6 +1842,19 @@
                                     "country": {
                                         "type": "string",
                                         "example": "Benin"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+229 0161786222"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "Voici ma bio"
+                                    },
+                                    "image": {
+                                        "description": "Image à uploader",
+                                        "type": "file",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -1719,12 +1870,14 @@
                         "description": "Validation échouée"
                     }
                 },
-                "security": {
-                    "0": {
+                "security": [
+                    {
                         "sanctum": []
                     },
-                    "bearerAuth": {}
-                }
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -1767,38 +1920,53 @@
                     "title",
                     "category",
                     "challenge_id",
-                    "deadline"
+                    "deadline",
+                    "objective",
+                    "description"
                 ],
                 "properties": {
                     "title": {
                         "type": "string",
-                        "example": "Projet Mobilité"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Une plateforme pour organiser le transport urbain"
-                    },
-                    "category": {
-                        "type": "string",
-                        "example": "transport"
-                    },
-                    "cover": {
-                        "type": "string",
-                        "example": "project-cover.png"
+                        "example": "Repenser la plateforme YANGO"
                     },
                     "challenge_id": {
                         "type": "integer",
                         "example": 1
                     },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "closed"
+                        ],
+                        "example": "active"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Créer une expérience fluide pour les utilisateurs"
+                    },
+                    "objective": {
+                        "type": "string",
+                        "example": "L objectif est de former des guerriers"
+                    },
+                    "cover": {
+                        "description": "Image à uploader",
+                        "type": "file",
+                        "format": "binary"
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "transport"
+                    },
                     "start_date": {
                         "type": "string",
                         "format": "date",
-                        "example": "2025-07-01"
+                        "example": "2025-06-10"
                     },
                     "deadline": {
                         "type": "string",
                         "format": "date",
-                        "example": "2025-07-31"
+                        "example": "2025-06-20"
                     }
                 },
                 "type": "object"
@@ -1909,14 +2077,9 @@
             },
             "UpdateSoumissionRequest": {
                 "required": [
-                    "user_id",
                     "figma_link"
                 ],
                 "properties": {
-                    "user_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "figma_link": {
                         "type": "string",
                         "example": "https://figma.com/file/abc123"
@@ -2096,6 +2259,10 @@
         {
             "name": "Partners",
             "description": "Partners"
+        },
+        {
+            "name": "Permissions",
+            "description": "Permissions"
         },
         {
             "name": "Projects",

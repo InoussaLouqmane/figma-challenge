@@ -26,7 +26,6 @@ class UserFactory extends Factory
             User::COL_COUNTRY => $this->faker->country(),
             User::COL_PHONE => $this->faker->optional()->e164PhoneNumber(),
             User::COL_BIO => $this->faker->optional()->text(200),
-            User::COL_PHOTO => $this->faker->optional()->imageUrl(200, 200, 'people'),
             User::COL_STATUS => 'active',
             User::COL_EMAIL_VERIFIED_AT => now(),
             'remember_token' => Str::random(10),

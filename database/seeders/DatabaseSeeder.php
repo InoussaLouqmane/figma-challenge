@@ -24,5 +24,9 @@ class DatabaseSeeder extends Seeder
 
         Resource::factory()->count(10)->create();
 
+        $this->call([
+            SoumissionSeeder::class,
+            NoteJurySeeder::class
+        ]);
     }
 }
