@@ -72,7 +72,7 @@
                                         "example": "Twitter"
                                     },
                                     "linkToPortfolio": {
-                                        "type": "url",
+                                        "type": "string",
                                         "example": "https://www.google.com"
                                     },
                                     "figmaSkills": {
@@ -1095,7 +1095,6 @@
                                 "required": [
                                     "title",
                                     "category",
-                                    "challenge_id",
                                     "deadline",
                                     "objective",
                                     "description"
@@ -1104,10 +1103,6 @@
                                     "title": {
                                         "type": "string",
                                         "example": "Repenser la plateforme YANGO"
-                                    },
-                                    "challenge_id": {
-                                        "type": "integer",
-                                        "example": 1
                                     },
                                     "status": {
                                         "type": "string",
@@ -1221,10 +1216,6 @@
                                     "title": {
                                         "type": "string",
                                         "example": "Repenser la plateforme YANGO"
-                                    },
-                                    "challenge_id": {
-                                        "type": "integer",
-                                        "example": 1
                                     },
                                     "status": {
                                         "type": "string",

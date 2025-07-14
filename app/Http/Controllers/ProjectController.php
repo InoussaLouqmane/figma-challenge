@@ -67,9 +67,8 @@ class ProjectController extends Controller
      *         @OA\MediaType (
      *              mediaType="multipart/form-data",
      *                 @OA\Schema(
-     *                    required={"title", "category", "challenge_id", "deadline", "objective", "description"},
+     *                    required={"title", "category", "deadline", "objective", "description"},
      *              @OA\Property(property="title", type="string", example="Repenser la plateforme YANGO"),
-     *              @OA\Property(property="challenge_id", type="integer", example=1),
      *              @OA\Property(property="status", type="string", enum={"active", "closed"}, example="active"),
      *              @OA\Property(property="description", type="string", example="Créer une expérience fluide pour les utilisateurs"),
      *              @OA\Property(property="objective", type="string", example="L objectif est de former des guerriers"),
@@ -151,7 +150,6 @@ class ProjectController extends Controller
      *             @OA\Schema(
      *                 required={},
      *                 @OA\Property(property="title", type="string", example="Repenser la plateforme YANGO"),
-     *                 @OA\Property(property="challenge_id", type="integer", example=1),
      *                 @OA\Property(property="status", type="string", enum={"active", "closed"}, example="active"),
      *                 @OA\Property(property="description", type="string", example="Créer une expérience fluide pour les utilisateurs"),
      *                 @OA\Property(property="objective", type="string", example="L objectif est de former des guerriers"),

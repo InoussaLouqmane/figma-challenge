@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Challenge;
 use App\Models\Project;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
@@ -20,8 +21,10 @@ class StoreProjectRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $challenge_id = Challenge::latest()->first()->id;
         $this->merge([
             'status' => $this->input('status', 'active'),
+            'challenge_id' => $this->input('challenge_id', $challenge_id),
         ]);
     }
 

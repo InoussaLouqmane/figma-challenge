@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create( RegistrationInfos::TABLENAME, function (Blueprint $table) {
             $table->id();
             $table->foreignId(RegistrationInfos::USER_ID)->constrained()->onDelete('cascade');
-            $table->string(RegistrationInfos::Objective);
+            $table->text(RegistrationInfos::Objective);
             $table->string(RegistrationInfos::AcquisitionChannel);
             $table->string(RegistrationInfos::LinkToPortfolio);
             $table->boolean(RegistrationInfos::FirstAttempt)->default(true);

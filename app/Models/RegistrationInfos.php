@@ -35,7 +35,6 @@ class RegistrationInfos extends Model
     protected $cast = [
         self::FigmaSkills => FigmaSkills::class,
         self::UXSkills => UXSkills::class,
-        self::LinkToPortfolio => 'url',
     ];
 
     public function user(){

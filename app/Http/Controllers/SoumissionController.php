@@ -90,10 +90,10 @@ class SoumissionController extends Controller
 
         $user = \App\Models\User::findOrFail($userId);
 
-        if($user->role !== UserRole::Challenger)
+        if($user->role == UserRole::Jury )
         {
             return response()->json([
-                'error' => 'Seul un challenger peut s\'inscrire.'
+                'error' => "Vous n'êtes pas autorisé à faire cette action."
             ], 403);
         }
 

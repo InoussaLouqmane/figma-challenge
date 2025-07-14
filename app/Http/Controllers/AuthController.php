@@ -39,7 +39,7 @@ class AuthController extends Controller
      *
      *             @OA\Property(property="objective", type="string", example="Prendre largent pour aller doter ma femme"),
      *             @OA\Property(property="acquisitionChannel", type="string", example="Twitter"),
-     *             @OA\Property(property="linkToPortfolio", type="url", example="https://www.google.com"),
+     *             @OA\Property(property="linkToPortfolio", type="string", example="https://www.google.com"),
      *             @OA\Property(property="figmaSkills", type="string", enum={"low", "medium", "high"}, example="low"),
      *             @OA\Property(property="uxSkills", type="string", enum={"low", "medium", "high"}, example="low"),
      *
@@ -65,7 +65,7 @@ class AuthController extends Controller
                 RegistrationInfos::Objective => 'required|string',
                 RegistrationInfos::UXSkills => 'required|string|in:low,medium,high',
                 RegistrationInfos::FigmaSkills => 'required|string|in:low,medium,high',
-                RegistrationInfos::LinkToPortfolio => 'required|url',
+                RegistrationInfos::LinkToPortfolio => 'required|string',
                 RegistrationInfos::AcquisitionChannel => 'required|string'
             ]);
         } catch (ValidationException $e) {
