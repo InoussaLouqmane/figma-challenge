@@ -26,22 +26,17 @@ class AuthController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"name","email","password","password_confirmation", "objective",
-     *                      "acquisitionChannel", "linkToPortfolio", "figmaSkills", "uxSkills"},
+     *                    "linkToPortfolio", "figmaSkills"},
      *
      *             @OA\Property(property="name", type="string", example="John Doe"),
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="12345678"),
      *             @OA\Property(property="password_confirmation", type="string", format="password", example="12345678"),
      *             @OA\Property(property="country", type="string", example="Benin", nullable=true),
-     *             @OA\Property(property="role", type="string", example="challenger", nullable=true),
      *             @OA\Property(property="phone", type="string", example="+229 0166662946", nullable=true),
-     *
-     *
      *             @OA\Property(property="objective", type="string", example="Prendre largent pour aller doter ma femme"),
-     *             @OA\Property(property="acquisitionChannel", type="string", example="Twitter"),
      *             @OA\Property(property="linkToPortfolio", type="string", example="https://www.google.com"),
      *             @OA\Property(property="figmaSkills", type="string", enum={"low", "medium", "high"}, example="low"),
-     *             @OA\Property(property="uxSkills", type="string", enum={"low", "medium", "high"}, example="low"),
      *
      *         )
      *     ),
@@ -59,14 +54,11 @@ class AuthController extends Controller
                 'email' => 'required|email|unique:users',
                 'password' => 'required|string|confirmed|min:6',
                 'country' => 'nullable|string|max:100',
-                'role' => 'sometimes|string|max:100',
                 'phone' => 'nullable|string|max:100',
 
                 RegistrationInfos::Objective => 'required|string',
-                RegistrationInfos::UXSkills => 'required|string|in:low,medium,high',
                 RegistrationInfos::FigmaSkills => 'required|string|in:low,medium,high',
                 RegistrationInfos::LinkToPortfolio => 'required|string',
-                RegistrationInfos::AcquisitionChannel => 'required|string'
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -92,9 +84,7 @@ class AuthController extends Controller
             $user->registrationInfos()->create([
                 RegistrationInfos::USER_ID => $user->id,
                 RegistrationInfos::Objective => $validated[RegistrationInfos::Objective],
-                RegistrationInfos::UXSkills => $validated[RegistrationInfos::UXSkills],
                 RegistrationInfos::LinkToPortfolio => $validated[RegistrationInfos::LinkToPortfolio],
-                RegistrationInfos::AcquisitionChannel => $validated[RegistrationInfos::AcquisitionChannel],
                 RegistrationInfos::FigmaSkills => $validated[RegistrationInfos::FigmaSkills],
                 RegistrationInfos::FirstAttempt => true,
                 RegistrationInfos::isActive => true,

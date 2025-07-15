@@ -23,10 +23,8 @@
                                     "password",
                                     "password_confirmation",
                                     "objective",
-                                    "acquisitionChannel",
                                     "linkToPortfolio",
-                                    "figmaSkills",
-                                    "uxSkills"
+                                    "figmaSkills"
                                 ],
                                 "properties": {
                                     "name": {
@@ -53,11 +51,6 @@
                                         "example": "Benin",
                                         "nullable": true
                                     },
-                                    "role": {
-                                        "type": "string",
-                                        "example": "challenger",
-                                        "nullable": true
-                                    },
                                     "phone": {
                                         "type": "string",
                                         "example": "+229 0166662946",
@@ -67,24 +60,11 @@
                                         "type": "string",
                                         "example": "Prendre largent pour aller doter ma femme"
                                     },
-                                    "acquisitionChannel": {
-                                        "type": "string",
-                                        "example": "Twitter"
-                                    },
                                     "linkToPortfolio": {
                                         "type": "string",
                                         "example": "https://www.google.com"
                                     },
                                     "figmaSkills": {
-                                        "type": "string",
-                                        "enum": [
-                                            "low",
-                                            "medium",
-                                            "high"
-                                        ],
-                                        "example": "low"
-                                    },
-                                    "uxSkills": {
                                         "type": "string",
                                         "enum": [
                                             "low",
@@ -1103,14 +1083,6 @@
                                     "title": {
                                         "type": "string",
                                         "example": "Repenser la plateforme YANGO"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "enum": [
-                                            "active",
-                                            "closed"
-                                        ],
-                                        "example": "active"
                                     },
                                     "description": {
                                         "type": "string",

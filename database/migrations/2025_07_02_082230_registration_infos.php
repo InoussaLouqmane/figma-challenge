@@ -18,12 +18,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId(RegistrationInfos::USER_ID)->constrained()->onDelete('cascade');
             $table->text(RegistrationInfos::Objective);
-            $table->string(RegistrationInfos::AcquisitionChannel);
+            $table->string(RegistrationInfos::AcquisitionChannel)->nullable();
             $table->string(RegistrationInfos::LinkToPortfolio);
             $table->boolean(RegistrationInfos::FirstAttempt)->default(true);
             $table->boolean(RegistrationInfos::isActive)->default(true);
             $table->enum(RegistrationInfos::FigmaSkills, array_column(FigmaSkills::cases(), 'value'));
-            $table->enum(RegistrationInfos::UXSkills, array_column(UXSkills::cases(), 'value'));
+            $table->enum(RegistrationInfos::UXSkills, array_column(UXSkills::cases(), 'value'))->nullable();
             $table->timestamps();
         }
 
