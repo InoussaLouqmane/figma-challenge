@@ -257,10 +257,16 @@ class NoteJuryController extends Controller
             foreach ($project->soumissions as $soumission) {
                 $notes = $soumission->notes;
 
-                $graphisme = $notes->sum('graphisme');
-                $animation = $notes->sum('animation');
-                $navigation = $notes->sum('navigation');
-                $total = $graphisme + $animation + $navigation;
+                $noteCount = $notes->count();
+                if ($noteCount === 0) {
+                    continue;
+                }
+
+                // Calcul des moyennes mais on garde les noms de champs d'origine
+                $graphisme = round($notes->sum('graphisme') / $noteCount, 2);
+                $animation = round($notes->sum('animation') / $noteCount, 2);
+                $navigation = round($notes->sum('navigation') / $noteCount, 2);
+                $total = round($graphisme + $animation + $navigation, 2);
 
                 $scores->push([
                     'challenger_id' => $soumission->user->id,
@@ -273,15 +279,12 @@ class NoteJuryController extends Controller
                 ]);
             }
 
-            // Tri par score décroissant
             $sorted = $scores->sortByDesc('total_points')->values();
 
-            // Attribution des rangs
             $ranked = $sorted->map(function ($item, $index) {
                 return array_merge(['position' => $index + 1], $item);
             });
 
-            // Résultat pour ce projet
             $classements[] = [
                 'project_id' => $project->id,
                 'project_title' => $project->title,
@@ -292,6 +295,7 @@ class NoteJuryController extends Controller
 
         return response()->json($classements);
     }
+
 
 
 }
