@@ -181,7 +181,6 @@ class NoteJuryController extends Controller
      */
     public function getNotesByChallenger($userId): \Illuminate\Http\JsonResponse
     {
-
         try {
             $user = User::findOrFail($userId);
         } catch (ModelNotFoundException $e) {
@@ -189,7 +188,6 @@ class NoteJuryController extends Controller
                 'message' => 'Utilisateur non trouvé'
             ]);
         }
-
 
         $soumission = Soumission::where('user_id', $userId)
             ->latest()
@@ -201,7 +199,6 @@ class NoteJuryController extends Controller
             ], 404);
         }
 
-        // Étape 2 : récupérer les notes liées à cette soumission
         $notes = NoteJury::where('soumission_id', $soumission->id)->get();
 
         if ($notes->isEmpty()) {
@@ -210,15 +207,16 @@ class NoteJuryController extends Controller
             ], 404);
         }
 
+        $noteCount = $notes->count();
 
         $summary = [
-            NoteJury::COL_GRAPHISME => $notes->sum(NoteJury::COL_GRAPHISME),
-            NoteJury::COL_ANIMATION => $notes->sum(NoteJury::COL_ANIMATION),
-            NoteJury::COL_NAVIGATION => $notes->sum(NoteJury::COL_NAVIGATION),
+            NoteJury::COL_GRAPHISME => round($notes->sum(NoteJury::COL_GRAPHISME) / $noteCount, 2),
+            NoteJury::COL_ANIMATION => round($notes->sum(NoteJury::COL_ANIMATION) / $noteCount, 2),
+            NoteJury::COL_NAVIGATION => round($notes->sum(NoteJury::COL_NAVIGATION) / $noteCount, 2),
         ];
-        $summary['total'] = array_sum($summary);
 
-        // Étape 4 : détails par jury
+        $summary['total'] = round(array_sum($summary), 2); // total moyen sur 3 critères
+
         $details = $notes->map(function ($note) {
             return [
                 'id_jury' => $note->jury_id,
@@ -235,6 +233,7 @@ class NoteJuryController extends Controller
             'notes_details' => $details,
         ]);
     }
+
 
 
 
