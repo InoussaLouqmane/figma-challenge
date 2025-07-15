@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ChallengeStatus;
 use App\Models\Challenge;
 use App\Models\Resource;
 use App\Models\User;
@@ -18,15 +19,17 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
 
-        Challenge::factory()->count(1)->create();
+        Challenge::factory()->count(1)->create([
+            Challenge::COL_STATUS => ChallengeStatus::Open
+        ]);
 
-        User::factory()->count(20)->create();
+        /*User::factory()->count(20)->create();
 
         Resource::factory()->count(10)->create();
 
         $this->call([
             SoumissionSeeder::class,
             NoteJurySeeder::class
-        ]);
+        ]);*/
     }
 }

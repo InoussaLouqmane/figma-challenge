@@ -18,14 +18,15 @@ class ChallengeFactory extends Factory
         $endDate = $this->faker->dateTimeBetween('+7 days', '+61 days');
         return [
             Challenge::COL_TITLE => 'Figma Challenge 2025',
-            Challenge::COL_DESCRIPTION => $this->faker->paragraph(),
+            Challenge::COL_DESCRIPTION => "Figma Challenge est un concours de design UX/UI qui réunit des créatifs autour de projets concrets à fort impact.
+Pendant une semaine, les participants relèvent un défi de refonte d’interface en explorant innovation, accessibilité et expérience utilisateur.",
             Challenge::COL_COVER => $this->faker->optional()->imageUrl(800, 400, 'business'),
             Challenge::COL_STATUS => $this->faker->randomElement($statuses),
             Challenge::COL_END_DATE => $endDate->format('Y-m-d'),
         ];
     }
 
-    public function configure(): static
+    /*public function configure(): static
     {
         return $this->afterCreating(function (Challenge $challenge) {
 
@@ -38,5 +39,5 @@ class ChallengeFactory extends Factory
             ]);
         });
 
-    }
+    }*/
 }
