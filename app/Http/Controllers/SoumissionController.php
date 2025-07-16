@@ -114,12 +114,10 @@ class SoumissionController extends Controller
 
         $exists = Soumission::where('user_id', $userId)
             ->where('challenge_id', $challengeId)
-            ->exists();
+            ->first();
 
         if ($exists) {
-            return response()->json([
-                'message' => 'Oh! Vous êtes déjà inscrit à un projet.'
-            ], 409);
+            $exists->delete();
         }
 
         $soumission = Soumission::create($request->validated());
@@ -154,30 +152,6 @@ class SoumissionController extends Controller
             return $soumission;
     }
 
-
-    /**
-     * @OA\Get(
-     *     path="/api/submissions-per-user",
-     *     summary="Afficher une soumission",
-     *     security={{"sanctum": {}}, "bearerAuth":{}},
-     *     tags={"Submissions"},
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Soumission détaillée")
-     * )
-     */
-    public function showPerUser(Request $request)
-    {
-        $user_id = $request->user()->id;
-        $soumission = Soumission::where('user_id', $user_id)
-            ->latest()->first();
-
-        if(!$soumission) {
-            return response()->json([
-                'message' => 'Soumission introuvable'
-            ], 404);
-        }
-        return $soumission;
-    }
 
     /**
      * @OA\Put(
