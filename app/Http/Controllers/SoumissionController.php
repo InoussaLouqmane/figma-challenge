@@ -229,7 +229,7 @@ class SoumissionController extends Controller
     }
 
 
-    /*
+    /**
      * @OA\Delete(
      *     path="/api/submissions/{id}",
      *     summary="Supprimer une soumission",
@@ -238,10 +238,24 @@ class SoumissionController extends Controller
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(response=200, description="Soumission supprimée")
      * )
-     *
+     */
     public function destroy($id)
     {
-        Soumission::destroy($id);
-        return response()->json(['message' => 'Soumission supprimée']);
-    }*/
+        try {
+            $soumission = Soumission::findOrFail($id);
+
+            if($soumission){
+                Soumission::destroy($id);
+            }
+            return response()->json(['message' => 'Soumission supprimée']);
+        }catch (ModelNotFoundException $e){
+            return response()->json([
+                'message' => 'Soumission introuvable'
+            ], 404);
+        }catch (\Exception){
+            return response()->json([
+                'message' => 'Erreur lors de la suppression'
+            ],500);
+        }
+    }
 }

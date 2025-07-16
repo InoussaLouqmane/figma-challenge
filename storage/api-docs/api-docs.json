@@ -1693,6 +1693,34 @@
                     },
                     "bearerAuth": {}
                 }
+            },
+            "delete": {
+                "tags": [
+                    "Submissions"
+                ],
+                "summary": "Supprimer une soumission",
+                "operationId": "24f49f1fb4ff2ee12cf489a8e28faec4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Soumission supprimée"
+                    }
+                },
+                "security": {
+                    "0": {
+                        "sanctum": []
+                    },
+                    "bearerAuth": {}
+                }
             }
         },
         "/api/users": {

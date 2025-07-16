@@ -84,6 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/submissions/{id}', [SoumissionController::class, 'show']); // afficher une soumission
     Route::put('/submissions/{id}', [SoumissionController::class, 'update']); //faire ou modifier une soumission
     Route::post('/submissions', [SoumissionController::class, 'storeSoumission']); //faire  une soumission
+    Route::delete('submissions/{id}', [SoumissionController::class, 'destroy']);
 
     // Messages de contact peuvent être publics ou protégés selon ton choix :
 
