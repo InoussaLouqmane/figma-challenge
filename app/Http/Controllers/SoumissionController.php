@@ -25,45 +25,45 @@ class SoumissionController extends Controller
      */
     public function index()
     {
-        $projects = Project::with(['soumissions.user'])->get();
+        $projects = Project::with(['soumissions.user', 'soumissions.notes'])->get();
 
-        $result = $projects->map(function ($project) {
-            $latestSub = $project->soumissions->first();
-            if(!$latestSub || !$latestSub->figma_link)
-            {
-                return null;
-            }
+        $result = $projects->flatMap(function ($project) {
+            return $project->soumissions->filter(function ($soumission) {
+                return !empty($soumission->figma_link); // Garder uniquement les soumissions valides
+            })->map(function ($soumission) use ($project) {
+                $totalGraphisme = $soumission->notes->sum('graphisme');
+                $totalAnimation = $soumission->notes->sum('animation');
+                $totalNavigation = $soumission->notes->sum('navigation');
 
-            $totalGraphisme = $latestSub->notes->sum('graphisme');
-            $totalAnimation = $latestSub->notes->sum('animation');
-            $totalNavigation = $latestSub->notes->sum('navigation');
-            return [
-                'project_id' => $project->id,
-                'project_title' => $project->title,
-                'project_cover' => $project->cover,
-                'project_deadline' => $project->deadline,
-                'canEdit'=> now()->lessThan($project->deadline),
-                'challenger_id' => $latestSub->user->id,
-                'challenger_name' => $latestSub->user->name,
-                'submission_id' => $latestSub->id,
-                'submission_date' => $latestSub->soumission_date->format('Y-m-d H:i'),
-                'submission_status' => $latestSub->status,
-                'submission_comment' => $latestSub->commentaire,
-                'figma_link' => $latestSub->figma_link,
+                return [
+                    'project_id' => $project->id,
+                    'project_title' => $project->title,
+                    'project_cover' => $project->cover,
+                    'project_deadline' => $project->deadline,
+                    'canEdit' => now()->lessThan($project->deadline),
 
-                'notes' => [
-                    'graphisme' => $totalGraphisme ?? null,
-                    'animation' => $totalAnimation ?? null,
-                    'navigation' => $totalNavigation ?? null,
-                ]
+                    'challenger_id' => $soumission->user->id,
+                    'challenger_name' => $soumission->user->name,
+                    'submission_id' => $soumission->id,
+                    'submission_date' => optional($soumission->soumission_date)->format('Y-m-d H:i'),
+                    'submission_status' => $soumission->status,
+                    'submission_comment' => $soumission->commentaire,
+                    'figma_link' => $soumission->figma_link,
 
-            ];
-        })->filter()->values();
+                    'notes' => [
+                        'graphisme' => $totalGraphisme,
+                        'animation' => $totalAnimation,
+                        'navigation' => $totalNavigation,
+                    ]
+                ];
+            });
+        })->values();
 
         return response()->json([
             'data' => $result
         ]);
     }
+
 
 
     /**
