@@ -69,8 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{id}', [UserController::class, 'show']);
     Route::post('/users/{id}', [UserController::class, 'update']);
 
-    //upload
-    Route::post('/upload', [MediaController::class, 'upload']);
+
     //special notes b challenger & classement
     Route::get('/notes-challenger/{id}', [NoteJuryController::class, 'getNotesByChallenger']);
 

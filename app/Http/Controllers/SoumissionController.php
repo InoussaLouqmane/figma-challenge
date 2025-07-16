@@ -23,46 +23,58 @@ class SoumissionController extends Controller
      *     @OA\Response(response=200, description="Liste des soumissions")
      * )
      */
-    public function index()
+
+
+    public function index(Request $request)
     {
+        $user = $request->user();
+
         $projects = Project::with(['soumissions.user', 'soumissions.notes'])->get();
 
-        $result = $projects->flatMap(function ($project) {
-            return $project->soumissions->filter(function ($soumission) {
-                return !empty($soumission->figma_link); // Garder uniquement les soumissions valides
-            })->map(function ($soumission) use ($project) {
-                $totalGraphisme = $soumission->notes->sum('graphisme');
-                $totalAnimation = $soumission->notes->sum('animation');
-                $totalNavigation = $soumission->notes->sum('navigation');
+        $result = $projects->flatMap(function ($project) use ($user) {
+            return $project->soumissions
+                ->filter(function ($soumission) use ($user) {
+                    // Filtrer selon le rôle : les challengers ne voient que leurs propres soumissions
+                    if ($user->role === UserRole::Challenger && $soumission->user_id !== $user->id) {
+                        return false;
+                    }
+                    // Garder uniquement les soumissions valides (avec figma_link)
+                    return !empty($soumission->figma_link);
+                })
+                ->map(function ($soumission) use ($project) {
+                    $totalGraphisme = $soumission->notes->sum('graphisme');
+                    $totalAnimation = $soumission->notes->sum('animation');
+                    $totalNavigation = $soumission->notes->sum('navigation');
 
-                return [
-                    'project_id' => $project->id,
-                    'project_title' => $project->title,
-                    'project_cover' => $project->cover,
-                    'project_deadline' => $project->deadline,
-                    'canEdit' => now()->lessThan($project->deadline),
+                    return [
+                        'project_id' => $project->id,
+                        'project_title' => $project->title,
+                        'project_cover' => $project->cover,
+                        'project_deadline' => $project->deadline,
+                        'canEdit' => now()->lessThan($project->deadline),
 
-                    'challenger_id' => $soumission->user->id,
-                    'challenger_name' => $soumission->user->name,
-                    'submission_id' => $soumission->id,
-                    'submission_date' => optional($soumission->soumission_date)->format('Y-m-d H:i'),
-                    'submission_status' => $soumission->status,
-                    'submission_comment' => $soumission->commentaire,
-                    'figma_link' => $soumission->figma_link,
+                        'challenger_id' => $soumission->user->id,
+                        'challenger_name' => $soumission->user->name,
+                        'submission_id' => $soumission->id,
+                        'submission_date' => optional($soumission->soumission_date)->format('Y-m-d H:i'),
+                        'submission_status' => $soumission->status,
+                        'submission_comment' => $soumission->commentaire,
+                        'figma_link' => $soumission->figma_link,
 
-                    'notes' => [
-                        'graphisme' => $totalGraphisme,
-                        'animation' => $totalAnimation,
-                        'navigation' => $totalNavigation,
-                    ]
-                ];
-            });
+                        'notes' => [
+                            'graphisme' => $totalGraphisme,
+                            'animation' => $totalAnimation,
+                            'navigation' => $totalNavigation,
+                        ]
+                    ];
+                });
         })->values();
 
         return response()->json([
             'data' => $result
         ]);
     }
+
 
 
 
@@ -140,6 +152,31 @@ class SoumissionController extends Controller
                 ], 404);
             }
             return $soumission;
+    }
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/submissions-per-user",
+     *     summary="Afficher une soumission",
+     *     security={{"sanctum": {}}, "bearerAuth":{}},
+     *     tags={"Submissions"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Soumission détaillée")
+     * )
+     */
+    public function showPerUser(Request $request)
+    {
+        $user_id = $request->user()->id;
+        $soumission = Soumission::where('user_id', $user_id)
+            ->latest()->first();
+
+        if(!$soumission) {
+            return response()->json([
+                'message' => 'Soumission introuvable'
+            ], 404);
+        }
+        return $soumission;
     }
 
     /**
